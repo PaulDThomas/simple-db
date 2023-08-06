@@ -12,13 +12,14 @@ export async function post_rows_to_table(
         inputJson.groupname,
       ]);
     const newFields = inputJson.items as unknown[];
-    const inserts = newFields.map(async (item) =>
-      run_query(
-        `INSERT INTO ${table} (groupname, simple_table_row) VALUES ($1, $2)`,
-        [inputJson.groupname, JSON.stringify(item)]
-      )
-    );
-    await Promise.all(inserts);
+    const query =
+      `INSERT INTO ${table} (groupname, simple_table_row) VALUES ` +
+      newFields.map((_, i) => `($${i * 2 + 1},$${(i + 1) * 2})`).join(",");
+    const queryParams = newFields.flatMap((item) => [
+      inputJson.groupname,
+      JSON.stringify(item),
+    ]);
+    await run_query(query, queryParams);
 
     return NextResponse.json(
       {

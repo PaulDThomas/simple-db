@@ -2,11 +2,7 @@
 
 import { useContext, useState } from "react";
 import { AppContext } from "./_context/AppContextProvider";
-import {
-  IMPORT_DETAILS,
-  LOAD_WORKBOOK,
-  PROCESSING_COMPLETE,
-} from "./_context/appContextReducer";
+import { PROCESSING_COMPLETE } from "./_context/appContextReducer";
 import { saveWorkbook } from "./_context/saveWorkbook";
 
 export default function SheetUploader() {
@@ -35,13 +31,7 @@ export default function SheetUploader() {
           onChange={(e) => {
             if (e.target.files && e.target.files.length === 1) {
               setLoading(true);
-              saveWorkbook(e.target.files[0], async (wb, sheetKeys) => {
-                dispatch({ operation: LOAD_WORKBOOK, workbook: wb });
-                if (sheetKeys)
-                  dispatch({
-                    operation: IMPORT_DETAILS,
-                    importDetails: sheetKeys,
-                  });
+              saveWorkbook(e.target.files[0], async () => {
                 dispatch({ operation: PROCESSING_COMPLETE });
                 setLoading(false);
                 setLoadedFile((e.target.files as FileList)[0].name);

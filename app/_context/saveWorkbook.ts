@@ -11,16 +11,14 @@ import { saveFields } from "./saveFields";
  */
 export const saveWorkbook = async (
   file: File,
-  callback: (wb: WorkBook | null, sheetKeys?: ImportDetails[]) => Promise<void>
+  callback: () => Promise<void>
 ) => {
-  let wb: WorkBook | null = null;
-  let sheetKeys: ImportDetails[] | undefined = undefined;
   const reader = new FileReader();
   reader.onloadend = async (event: ProgressEvent<FileReader>) => {
     if (event.target) {
       try {
         const arrayBuffer = event.target.result;
-        wb = read(arrayBuffer, { cellText: false, cellDates: true });
+        const wb = read(arrayBuffer, { cellText: false, cellDates: true });
         [wb.SheetNames[0]].forEach(async (sn) => {
           const ws = (wb as WorkBook).Sheets[sn];
           const rows: iSimpleTableRow[] = utils.sheet_to_json(
@@ -37,7 +35,7 @@ export const saveWorkbook = async (
             fieldName: camelise(k),
           }));
 
-          saveFields(fields);
+          await saveFields(fields);
         });
       } catch (error) {
         throw "error";
@@ -45,7 +43,7 @@ export const saveWorkbook = async (
     } else {
       throw "No target";
     }
-    callback(wb, sheetKeys);
+    callback();
   };
   reader.readAsArrayBuffer(file);
 };

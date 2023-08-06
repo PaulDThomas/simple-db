@@ -14,16 +14,16 @@ export interface ImportDetails {
 }
 
 export const DELETE_FIELD = "DELETE_FIELD";
-export const LOAD_WORKBOOK = "LOAD_WORKBOOK";
 export const IMPORT_DETAILS = "IMPORT_DETAILS";
 export const PROCESSING_COMPLETE = "PROCESSING_COMPLETE";
+export const SAVE_WORKBOOK = "SAVE_WORKBOOK";
 export const UPDATE_CELL = "UPDATE_CELL";
 
 type Operation =
   | "DELETE_FIELD"
   | "IMPORT_DETAILS"
-  | "LOAD_WORKBOOK"
   | "PROCESSING_COMPLETE"
+  | "SAVE_WORKBOOK"
   | "UPDATE_CELL";
 
 export interface AppActionProps {
@@ -72,7 +72,7 @@ export const appContextReducer = (
       } else {
         throw `APPCONTEXTREDUCER: ${action.operation}: What are the import details?`;
       }
-    case "LOAD_WORKBOOK":
+    case "SAVE_WORKBOOK":
       if (action.workbook) {
         newState.workbook = action.workbook;
         return newState;
