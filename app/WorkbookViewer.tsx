@@ -11,7 +11,7 @@ export default function WorkbookViewer() {
   const { state } = useContext(AppContext);
   const wb = state.workbook;
 
-  return !wb ? (
+  return !state.processed || !wb ? (
     <div>No workbook loaded</div>
   ) : (
     <>

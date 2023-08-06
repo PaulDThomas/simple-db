@@ -7,7 +7,7 @@ export async function delete_by_id(
 ): Promise<NextResponse> {
   const inputJson = await request.json();
   if (inputJson.id) {
-    return run_query(`DELETE ${table} WHERE id = $1`, [inputJson["id"]]);
+    return run_query(`DELETE FROM ${table} WHERE id = $1`, [inputJson["id"]]);
   } else {
     return NextResponse.json(
       {

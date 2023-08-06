@@ -14,6 +14,7 @@ export interface AppContextProps {
 
 const defaultAppContext: appState = {
   name: "",
+  processed: false,
   workbook: null,
   fields: [],
   rows: [],

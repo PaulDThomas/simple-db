@@ -1,5 +1,4 @@
 import { iSimpleTableField, iSimpleTableRow } from "@asup/simple-table";
-import { load } from "./load";
 import { WorkBook } from "xlsx";
 
 export interface ImportField extends iSimpleTableRow {
@@ -14,12 +13,18 @@ export interface ImportDetails {
   fields: ImportField[];
 }
 
-export const LOAD = "LOAD";
+export const DELETE_FIELD = "DELETE_FIELD";
 export const LOAD_WORKBOOK = "LOAD_WORKBOOK";
 export const IMPORT_DETAILS = "IMPORT_DETAILS";
+export const PROCESSING_COMPLETE = "PROCESSING_COMPLETE";
 export const UPDATE_CELL = "UPDATE_CELL";
 
-type Operation = "IMPORT_DETAILS" | "LOAD" | "LOAD_WORKBOOK" | "UPDATE_CELL";
+type Operation =
+  | "DELETE_FIELD"
+  | "IMPORT_DETAILS"
+  | "LOAD_WORKBOOK"
+  | "PROCESSING_COMPLETE"
+  | "UPDATE_CELL";
 
 export interface AppActionProps {
   operation: Operation;
@@ -33,6 +38,7 @@ export interface AppActionProps {
 
 export interface appState {
   name: string;
+  processed: boolean;
   workbook: WorkBook | null;
   importDetails: ImportDetails[];
   fields: ImportField[];
@@ -47,6 +53,16 @@ export const appContextReducer = (
     ...state,
   };
   switch (action.operation) {
+    case "DELETE_FIELD":
+      if (action.fieldName) {
+        const ix = newState.fields.findIndex(
+          (f) => f.fieldName === action.fieldName
+        );
+        if (ix > -1) newState.fields.splice(ix, 1);
+        return newState;
+      } else {
+        throw `APPCONTEXTREDUCER: ${action.operation}: What are the import details?`;
+      }
     case "IMPORT_DETAILS":
       if (action.importDetails) {
         newState.importDetails = action.importDetails;
@@ -54,25 +70,18 @@ export const appContextReducer = (
         newState.rows = action.importDetails[0].rows;
         return newState;
       } else {
-        throw "What are the import details??";
-      }
-    case "LOAD":
-      if (action.files && action.files.length === 1) {
-        const file = action.files[0];
-        load(file, async (ret) => {
-          newState.workbook = ret;
-        });
-        return newState;
-      } else {
-        throw "Where is the file?";
+        throw `APPCONTEXTREDUCER: ${action.operation}: What are the import details?`;
       }
     case "LOAD_WORKBOOK":
       if (action.workbook) {
         newState.workbook = action.workbook;
         return newState;
       } else {
-        throw "Where is the workbook?";
+        throw `APPCONTEXTREDUCER: ${action.operation}: Where is the workbook?`;
       }
+    case "PROCESSING_COMPLETE":
+      newState.processed = true;
+      return newState;
     case "UPDATE_CELL":
       if (action.rowId && action.fieldName) {
         const newRow = newState.rows.find((r) => r.id === action.rowId);
@@ -81,7 +90,7 @@ export const appContextReducer = (
         }
         return newState;
       } else {
-        throw "What am I updating?";
+        throw `APPCONTEXTREDUCER: ${action.operation}: What am I updating?`;
       }
   }
 };
