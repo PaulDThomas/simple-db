@@ -1,15 +1,13 @@
-DROP FUNCTION IF EXISTS return_row_data
+DROP FUNCTION IF EXISTS rowdata_family
 ;
 
 CREATE
-OR REPLACE FUNCTION return_row_data (initial_id UUID, child_depth INT DEFAULT 1, parent_depth INT DEFAULT 0) RETURNS TABLE (
+OR REPLACE FUNCTION rowdata_family (initial_id UUID, child_depth INT DEFAULT 1, parent_depth INT DEFAULT 0) RETURNS TABLE (
   id UUID,
   parent UUID,
   groupname VARCHAR(64),
   simple_table_row JSONB,
-  level_change INT,
-  child_depth INT,
-  parent_depth INT
+  level_change INT
   -- link ARRAY[UUID]
 ) LANGUAGE SQL AS $$
 WITH RECURSIVE
@@ -57,7 +55,7 @@ WITH RECURSIVE
       OR (parent = r.id AND level_change*-1 < parent_depth)
   )
 SELECT
-  id, parent_id, groupname, simple_table_row, level_change, child_depth, parent_depth
+  id, parent_id, groupname, simple_table_row, level_change
 FROM
   source;
   $$
@@ -67,5 +65,5 @@ SELECT
   *
 FROM
   -- return_row_data ('d061e161-2f47-411f-99b5-f518e2cb8329',0,0) -- G1
-  return_row_data ('7caafe7e-5e52-4170-9147-679ac40956c7') -- G5
+  rowdata_family ('7caafe7e-5e52-4170-9147-679ac40956c7') -- G5
   -- return_row_data ('77f16113-b8b1-4cca-a957-c1ad6286bdc5') -- G9
