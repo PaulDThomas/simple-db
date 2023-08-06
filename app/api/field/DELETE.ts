@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import conn from "../../../lib/db";
+import conn from "../_functions/conn";
 
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
   // Check body
