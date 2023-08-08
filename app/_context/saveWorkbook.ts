@@ -2,6 +2,7 @@ import { iSimpleTableRow } from "@asup/simple-table";
 import { WorkBook, read, utils } from "xlsx";
 import { camelise } from "../../functions/camelise";
 import { saveFields } from "./saveFields";
+import { field_simple_table_row } from "../api/fields/FieldRow";
 
 /**
  * Read in spreadsheet file
@@ -10,7 +11,7 @@ import { saveFields } from "./saveFields";
  */
 export const saveWorkbook = async (
   file: File,
-  callback: () => Promise<void>
+  callback: (wb: WorkBook) => Promise<void>
 ) => {
   const reader = new FileReader();
   reader.onloadend = async (event: ProgressEvent<FileReader>) => {
@@ -28,21 +29,24 @@ export const saveWorkbook = async (
             Object.keys(obj).forEach((k) => fieldNames.add(k))
           );
 
-          const fields = [...fieldNames].map((k) => ({
-            worksheetFieldName: k,
-            fieldLabel: k.replace(/[^A-Z0-9]/gi, " ").replace(/\s+/g, " "),
-            fieldName: camelise(k),
-          }));
+          const fields = [...fieldNames].map(
+            (k) =>
+              ({
+                worksheetFieldName: k,
+                fieldLabel: k.replace(/[^A-Z0-9]/gi, " ").replace(/\s+/g, " "),
+                fieldName: camelise(k),
+              } as field_simple_table_row)
+          );
 
           await saveFields(fields);
         });
+        callback(wb);
       } catch (error) {
         throw "error";
       }
     } else {
       throw "No target";
     }
-    callback();
   };
   reader.readAsArrayBuffer(file);
 };

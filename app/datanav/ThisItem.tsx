@@ -1,5 +1,5 @@
 import { SimpleTable } from "@asup/simple-table";
-import { RowDataRow } from "./RowDataRow";
+import { RowDataRow } from "../api/rowdata/RowDataRow";
 
 interface ThisItemProps {
   items: RowDataRow[];

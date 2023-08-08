@@ -1,6 +1,6 @@
-import { ImportField } from "./appContextReducer";
+import { field_simple_table_row } from "../api/fields/FieldRow";
 
-export async function saveFields(fields: ImportField[]) {
+export async function saveFields(fields: field_simple_table_row[]) {
   try {
     const request = await fetch("/api/fields", {
       method: "POST",

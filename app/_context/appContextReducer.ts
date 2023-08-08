@@ -1,37 +1,27 @@
 import { iSimpleTableField, iSimpleTableRow } from "@asup/simple-table";
 import { WorkBook } from "xlsx";
-
-export interface ImportField extends iSimpleTableRow {
-  worksheetFieldName: string;
-  fieldName: string;
-  fieldLabel: string;
-}
-
-export interface ImportDetails {
-  sheetName: string;
-  rows: iSimpleTableRow[];
-  fields: ImportField[];
-}
+import { FieldRow } from "../api/fields/FieldRow";
 
 export const DELETE_FIELD = "DELETE_FIELD";
 export const IMPORT_DETAILS = "IMPORT_DETAILS";
 export const PROCESSING_COMPLETE = "PROCESSING_COMPLETE";
-export const SAVE_WORKBOOK = "SAVE_WORKBOOK";
+export const SET_WORKBOOK = "SET_WORKBOOK";
+export const SET_FIELDS = "SET_FIELDS";
 export const UPDATE_CELL = "UPDATE_CELL";
 
 type Operation =
   | "DELETE_FIELD"
-  | "IMPORT_DETAILS"
   | "PROCESSING_COMPLETE"
-  | "SAVE_WORKBOOK"
+  | "SET_FIELDS"
+  | "SET_WORKBOOK"
   | "UPDATE_CELL";
 
 export interface AppActionProps {
   operation: Operation;
   files?: FileList;
   workbook?: WorkBook | null;
-  importDetails?: ImportDetails[];
   rowId?: string;
+  fields?: FieldRow[];
   fieldName?: string;
   newValue?: unknown;
 }
@@ -39,10 +29,9 @@ export interface AppActionProps {
 export interface appState {
   name: string;
   processed: boolean;
+  fields: FieldRow[] | null;
+  rows: iSimpleTableRow[] | null;
   workbook: WorkBook | null;
-  importDetails: ImportDetails[];
-  fields: ImportField[];
-  rows: iSimpleTableRow[];
 }
 
 export const appContextReducer = (
@@ -54,25 +43,23 @@ export const appContextReducer = (
   };
   switch (action.operation) {
     case "DELETE_FIELD":
-      if (action.fieldName) {
+      if (action.fieldName && newState.fields) {
         const ix = newState.fields.findIndex(
-          (f) => f.fieldName === action.fieldName
+          (f) => f.simple_table_row.fieldName === action.fieldName
         );
         if (ix > -1) newState.fields.splice(ix, 1);
         return newState;
       } else {
         throw `APPCONTEXTREDUCER: ${action.operation}: What are the import details?`;
       }
-    case "IMPORT_DETAILS":
-      if (action.importDetails) {
-        newState.importDetails = action.importDetails;
-        newState.fields = action.importDetails[0].fields;
-        newState.rows = action.importDetails[0].rows;
+    case "SET_FIELDS":
+      if (action.fields) {
+        newState.fields = action.fields;
         return newState;
       } else {
-        throw `APPCONTEXTREDUCER: ${action.operation}: What are the import details?`;
+        throw `APPCONTEXTREDUCER: ${action.operation}: Where is the workbook?`;
       }
-    case "SAVE_WORKBOOK":
+    case "SET_WORKBOOK":
       if (action.workbook) {
         newState.workbook = action.workbook;
         return newState;
@@ -83,7 +70,7 @@ export const appContextReducer = (
       newState.processed = true;
       return newState;
     case "UPDATE_CELL":
-      if (action.rowId && action.fieldName) {
+      if (action.rowId && action.fieldName && newState.rows) {
         const newRow = newState.rows.find((r) => r.id === action.rowId);
         if (newRow) {
           newRow[action.fieldName] = action.newValue;

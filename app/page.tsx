@@ -1,8 +1,8 @@
 import { Suspense } from "react";
+import { PreState } from "./PreState";
 import SheetUploader from "./SheetUploader";
 import WorkbookViewer from "./WorkbookViewer";
 import styles from "./page.module.css";
-import WorkbookColumns from "./WorkbookColumns";
 
 export default function Home() {
   return (
@@ -14,6 +14,7 @@ export default function Home() {
           <WorkbookViewer />
         </Suspense>
       </div>
+      <PreState />
     </main>
   );
 }

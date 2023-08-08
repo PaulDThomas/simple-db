@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { RowDataRow } from "./RowDataRow";
+import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { ChildrenTable } from "./ChildrenTable";
 import { ParentBreadcrumbs } from "./ParentBreadcrumbs";
 import { ThisItem } from "./ThisItem";

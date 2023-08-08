@@ -15,10 +15,9 @@ export interface AppContextProps {
 const defaultAppContext: appState = {
   name: "",
   processed: false,
+  fields: null,
+  rows: null,
   workbook: null,
-  fields: [],
-  rows: [],
-  importDetails: [{ sheetName: "", fields: [], rows: [] }],
 };
 
 export const AppContext = createContext<AppContextProps>({

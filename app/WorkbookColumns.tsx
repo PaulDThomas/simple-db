@@ -1,38 +1,34 @@
 "use client";
 
-import { SimpleTable, iSimpleTableRow } from "@asup/simple-table";
+import {
+  SimpleTable,
+  iSimpleTableRow,
+  simpleTableSortFn,
+} from "@asup/simple-table";
 import { useCallback, useContext, useEffect, useState } from "react";
 import EditableCell from "./EditableCell";
 import { AppContext } from "./_context/AppContextProvider";
-
-const getColumnData = async () => {
-  try {
-    const request = await fetch(
-      "/api/fields?fieldGroup=TPV%20data%20agreements"
-    );
-    const response = await request.json();
-    return response;
-  } catch (error) {
-    console.warn(error);
-  }
-};
+import { retrieveFields } from "./_functions/retreiveFields";
+import { FieldRow } from "./api/fields/FieldRow";
+import { DELETE_FIELD, SET_FIELDS } from "./_context/appContextReducer";
 
 export default function WorkbookColumns() {
-  const { state } = useContext(AppContext);
-  const [tableData, setTableData] = useState<iSimpleTableRow[]>([]);
+  const { state, dispatch } = useContext(AppContext);
+  // const [tableData, setTableData] = useState<fieldRow[] | null>(null);
 
   const newData = useCallback(async () => {
-    if (state.processed) {
-      const newData = await getColumnData();
-      console.log(newData);
-      setTableData(newData.rows);
-    }
-  }, [state.processed]);
+    console.log(`Checking for new data: ${state.processed}`);
+    const newData = await retrieveFields("TPV data agreements");
+    dispatch({ operation: SET_FIELDS, fields: newData });
+    // setTableData(newData);
+  }, [dispatch, state.processed]);
   useEffect(() => {
-    newData();
-  }, [newData]);
+    if (state.processed && state.fields === null) {
+      newData();
+    }
+  }, [newData, state.processed, state.fields]);
 
-  return (tableData?.length ?? 0) > 0 ? (
+  return state.fields && state.fields.length > 0 ? (
     <div
       style={{
         width: "90vw",
@@ -44,7 +40,7 @@ export default function WorkbookColumns() {
         headerLabel="Variable list"
         id="worksheet-columns"
         keyField={"id"}
-        data={tableData.map((i) => ({
+        data={state.fields.map((i) => ({
           id: i.id,
           groupName: i.groupname,
           ...(i.simple_table_row as iSimpleTableRow),
@@ -53,19 +49,19 @@ export default function WorkbookColumns() {
           {
             name: "groupName",
             label: "Group name",
-            // sortFn: simpleTableSortFn,
+            sortFn: simpleTableSortFn,
             canColumnFilter: true,
           },
           {
             name: "fieldName",
             label: "Name",
-            // sortFn: simpleTableSortFn,
+            sortFn: simpleTableSortFn,
             canColumnFilter: true,
           },
           {
             name: "fieldLabel",
             label: "Label",
-            // sortFn: simpleTableSortFn,
+            sortFn: simpleTableSortFn,
             canColumnFilter: true,
             renderFn: EditableCell,
           },
@@ -85,6 +81,10 @@ export default function WorkbookColumns() {
                     body: JSON.stringify(rowData),
                   });
                   console.log("DELETED");
+                  dispatch({
+                    operation: DELETE_FIELD,
+                    fieldName: rowData.fieldName as string,
+                  });
                 }}
               >
                 x {(rowData.id as string).slice(0, 4)}

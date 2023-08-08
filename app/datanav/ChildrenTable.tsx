@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { RowDataRow } from "./RowDataRow";
+import { RowDataRow } from "../api/rowdata/RowDataRow";
 
 interface ChildrenTableProps {
   items: RowDataRow[];

@@ -8,7 +8,7 @@ import EditableCell from "./EditableCell";
 export default function WorkbookData() {
   const { state } = useContext(AppContext);
 
-  return state.importDetails.length > 0 ? (
+  return state.fields && state.rows && state.fields.length > 0 ? (
     <div
       style={{
         width: "90vw",
@@ -20,14 +20,16 @@ export default function WorkbookData() {
     >
       {/* Some data */}
       <SimpleTable
-        headerLabel={`Data from ${state.importDetails[0].sheetName}`}
+        headerLabel={`Data from ${
+          state.workbook?.SheetNames[0] ?? "some spreadhseet"
+        }`}
         id="worksheet-data"
         keyField="id"
         mainBackgroundColor="inherit"
         headerBackgroundColor="inherit"
         fields={state.fields.map((wf) => ({
-          name: wf.worksheetFieldName,
-          label: wf.fieldLabel,
+          name: wf.simple_table_row.worksheetFieldName,
+          label: wf.simple_table_row.fieldLabel,
           sortFn: simpleTableSortFn,
           canColumnFilter: true,
           renderFn: EditableCell,
