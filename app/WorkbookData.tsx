@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { AppContext } from "./_context/AppContextProvider";
 import { SimpleTable, simpleTableSortFn } from "@asup/simple-table";
-import EditableCell from "./EditableCell";
+import EditableFieldCell from "./EditableFieldCell";
 
 export default function WorkbookData() {
   const { state } = useContext(AppContext);
@@ -32,7 +32,7 @@ export default function WorkbookData() {
           label: wf.simple_table_row.fieldLabel,
           sortFn: simpleTableSortFn,
           canColumnFilter: true,
-          renderFn: EditableCell,
+          renderFn: EditableFieldCell,
         }))}
         data={state.rows}
       />

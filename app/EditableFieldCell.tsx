@@ -3,9 +3,9 @@
 import { iSimpleTableCellRenderProps } from "@asup/simple-table";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "./_context/AppContextProvider";
-import { UPDATE_CELL } from "./_context/appContextReducer";
+import { UPDATE_CELL, UPDATE_FIELD_CELL } from "./_context/appContextReducer";
 
-export default function EditableCell({
+export default function EditableFieldCell({
   cellField,
   rowData,
 }: iSimpleTableCellRenderProps): JSX.Element {
@@ -13,17 +13,15 @@ export default function EditableCell({
 
   const [currentValue, setCurrentValue] = useState<unknown>();
   useEffect(() => {
-    // if (typeof rowData[cellField] === "string")
     setCurrentValue(rowData[cellField] as string);
   }, [rowData, cellField]);
 
   // Debounce update
   useEffect(() => {
-    // if (typeof rowData[cellField] === "string") {
     const update = setTimeout(() => {
       if (currentValue !== rowData[cellField]) {
         dispatch({
-          operation: UPDATE_CELL,
+          operation: UPDATE_FIELD_CELL,
           rowId: rowData.id as string,
           fieldName: cellField,
           newValue: currentValue,
@@ -63,15 +61,23 @@ export default function EditableCell({
     );
   } else {
     return (
-      <input
-        style={{ width: "calc(100% - 4px)" }}
-        value={`${currentValue ?? ""}`}
-        onChange={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          setCurrentValue(e.currentTarget.value);
+      <div
+        style={{
+          paddingRight: "4px",
+          backgroundColor:
+            currentValue === rowData[cellField] ? "inherit" : "greenyellow",
         }}
-      />
+      >
+        <input
+          style={{ width: "calc(100% - 4px)" }}
+          value={`${currentValue ?? ""}`}
+          onChange={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setCurrentValue(e.currentTarget.value);
+          }}
+        />
+      </div>
     );
   }
 }

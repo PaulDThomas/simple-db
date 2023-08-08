@@ -6,22 +6,25 @@ import {
   simpleTableSortFn,
 } from "@asup/simple-table";
 import { useCallback, useContext, useEffect, useState } from "react";
-import EditableCell from "./EditableCell";
+import EditableFieldCell from "./EditableFieldCell";
 import { AppContext } from "./_context/AppContextProvider";
 import { retrieveFields } from "./_functions/retreiveFields";
 import { FieldRow } from "./api/fields/FieldRow";
 import { DELETE_FIELD, SET_FIELDS } from "./_context/appContextReducer";
+import { DeleteFieldButton } from "./DeleteFieldButton";
 
-export default function WorkbookColumns() {
+interface WorkbookColumnsProps {
+  groupName: string;
+}
+
+export default function FieldTable({ groupName }: WorkbookColumnsProps) {
   const { state, dispatch } = useContext(AppContext);
   // const [tableData, setTableData] = useState<fieldRow[] | null>(null);
 
   const newData = useCallback(async () => {
-    console.log(`Checking for new data: ${state.processed}`);
     const newData = await retrieveFields("TPV data agreements");
     dispatch({ operation: SET_FIELDS, fields: newData });
-    // setTableData(newData);
-  }, [dispatch, state.processed]);
+  }, [dispatch]);
   useEffect(() => {
     if (state.processed && state.fields === null) {
       newData();
@@ -36,15 +39,19 @@ export default function WorkbookColumns() {
         height: "30vh",
       }}
     >
+      {/* <LoadFieldsButton groupName={groupName} />
+      <SaveFieldsButton groupName={groupName} /> */}
       <SimpleTable
         headerLabel="Variable list"
         id="worksheet-columns"
         keyField={"id"}
-        data={state.fields.map((i) => ({
-          id: i.id,
-          groupName: i.groupname,
-          ...(i.simple_table_row as iSimpleTableRow),
-        }))}
+        data={state.fields
+          .filter((field) => (field.groupname = groupName))
+          .map((field) => ({
+            id: field.id,
+            groupName: field.groupname,
+            ...(field.simple_table_row as iSimpleTableRow),
+          }))}
         fields={[
           {
             name: "groupName",
@@ -57,39 +64,20 @@ export default function WorkbookColumns() {
             label: "Name",
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
+            renderFn: EditableFieldCell,
           },
           {
             name: "fieldLabel",
             label: "Label",
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
-            renderFn: EditableCell,
+            renderFn: EditableFieldCell,
           },
           {
             name: "id",
             label: "Delete?",
             width: "20px",
-            renderFn: ({ rowData }) => (
-              <button
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  console.log(`Delete ${rowData.id}`);
-                  await fetch("/api/fields", {
-                    method: "DELETE",
-                    headers: { "Context-type": "application/json" },
-                    body: JSON.stringify(rowData),
-                  });
-                  console.log("DELETED");
-                  dispatch({
-                    operation: DELETE_FIELD,
-                    fieldName: rowData.fieldName as string,
-                  });
-                }}
-              >
-                x {(rowData.id as string).slice(0, 4)}
-              </button>
-            ),
+            renderFn: DeleteFieldButton,
           },
         ]}
       />

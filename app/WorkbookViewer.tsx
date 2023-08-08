@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "./_context/AppContextProvider";
 import { IMPORT_DETAILS } from "./_context/appContextReducer";
-import WorkbookColumns from "./WorkbookColumns";
+import FieldTable from "./FieldTable";
 import { getColumns } from "./_functions/getColumns";
 import WorkbookData from "./WorkbookData";
 
@@ -29,7 +29,7 @@ export default function WorkbookViewer() {
           </ul>
         </div>
       )}
-      <WorkbookColumns />
+      <FieldTable groupName="TPV data agreements" />
       <WorkbookData />
     </>
   );

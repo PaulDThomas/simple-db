@@ -8,13 +8,15 @@ export const PROCESSING_COMPLETE = "PROCESSING_COMPLETE";
 export const SET_WORKBOOK = "SET_WORKBOOK";
 export const SET_FIELDS = "SET_FIELDS";
 export const UPDATE_CELL = "UPDATE_CELL";
+export const UPDATE_FIELD_CELL = "UPDATE_FIELD_CELL";
 
 type Operation =
   | "DELETE_FIELD"
   | "PROCESSING_COMPLETE"
   | "SET_FIELDS"
   | "SET_WORKBOOK"
-  | "UPDATE_CELL";
+  | "UPDATE_CELL"
+  | "UPDATE_FIELD_CELL";
 
 export interface AppActionProps {
   operation: Operation;
@@ -74,6 +76,16 @@ export const appContextReducer = (
         const newRow = newState.rows.find((r) => r.id === action.rowId);
         if (newRow) {
           newRow[action.fieldName] = action.newValue;
+        }
+        return newState;
+      } else {
+        throw `APPCONTEXTREDUCER: ${action.operation}: What am I updating?`;
+      }
+    case "UPDATE_FIELD_CELL":
+      if (action.rowId && action.fieldName && newState.fields) {
+        const newField = newState.fields.find((r) => r.id === action.rowId);
+        if (newField) {
+          newField.simple_table_row[action.fieldName] = action.newValue;
         }
         return newState;
       } else {
