@@ -3,7 +3,7 @@
 import { iSimpleTableCellRenderProps } from "@asup/simple-table";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "./_context/AppContextProvider";
-import { UPDATE_CELL, UPDATE_FIELD_CELL } from "./_context/appContextReducer";
+import { UPDATE_FIELD_CELL } from "./_context/appContextReducer";
 
 export default function EditableFieldCell({
   cellField,
@@ -29,45 +29,39 @@ export default function EditableFieldCell({
       }
     }, 1000);
     return () => clearTimeout(update);
-    // }
   }, [cellField, currentValue, dispatch, rowData]);
 
-  if (currentValue instanceof Date) {
-    const str = currentValue.toISOString().slice(0, 10);
-    return (
-      <input
-        style={{ width: "calc(100% - 4px)" }}
-        type="date"
-        value={str}
-        onChange={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          setCurrentValue(new Date(e.currentTarget.value));
-        }}
-      />
-    );
-  } else if (typeof currentValue === "number") {
-    return (
-      <input
-        style={{ width: "calc(100% - 4px)" }}
-        type="number"
-        value={currentValue}
-        onChange={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          setCurrentValue(e.currentTarget.value);
-        }}
-      />
-    );
-  } else {
-    return (
-      <div
-        style={{
-          paddingRight: "4px",
-          backgroundColor:
-            currentValue === rowData[cellField] ? "inherit" : "greenyellow",
-        }}
-      >
+  return (
+    <div
+      style={{
+        paddingRight: "4px",
+        backgroundColor:
+          currentValue === rowData[cellField] ? "inherit" : "greenyellow",
+      }}
+    >
+      {currentValue instanceof Date ? (
+        <input
+          style={{ width: "calc(100% - 4px)" }}
+          type="date"
+          value={currentValue.toISOString().slice(0, 10)}
+          onChange={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setCurrentValue(new Date(e.currentTarget.value));
+          }}
+        />
+      ) : typeof currentValue === "number" ? (
+        <input
+          style={{ width: "calc(100% - 4px)" }}
+          type="number"
+          value={currentValue as number}
+          onChange={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setCurrentValue(parseFloat(e.currentTarget.value));
+          }}
+        />
+      ) : (
         <input
           style={{ width: "calc(100% - 4px)" }}
           value={`${currentValue ?? ""}`}
@@ -77,7 +71,7 @@ export default function EditableFieldCell({
             setCurrentValue(e.currentTarget.value);
           }}
         />
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
 }
