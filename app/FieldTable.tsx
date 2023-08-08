@@ -5,13 +5,14 @@ import {
   iSimpleTableRow,
   simpleTableSortFn,
 } from "@asup/simple-table";
-import { useCallback, useContext, useEffect, useState } from "react";
-import EditableFieldCell from "./EditableFieldCell";
-import { AppContext } from "./_context/AppContextProvider";
-import { retrieveFields } from "./_functions/retreiveFields";
-import { FieldRow } from "./api/fields/FieldRow";
-import { DELETE_FIELD, SET_FIELDS } from "./_context/appContextReducer";
+import { useCallback, useContext, useEffect } from "react";
 import { DeleteFieldButton } from "./DeleteFieldButton";
+import EditableFieldCell from "./EditableFieldCell";
+import { LoadFieldsButton } from "./LoadFieldsButton";
+import { SaveFieldsButton } from "./SaveFieldsButton";
+import { AppContext } from "./_context/AppContextProvider";
+import { SET_FIELDS } from "./_context/appContextReducer";
+import { retrieveFields } from "./_functions/retreiveFields";
 
 interface WorkbookColumnsProps {
   groupName: string;
@@ -36,11 +37,11 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
       style={{
         width: "90vw",
         minHeight: "200px",
-        height: "30vh",
+        height: "60vh",
       }}
     >
-      {/* <LoadFieldsButton groupName={groupName} />
-      <SaveFieldsButton groupName={groupName} /> */}
+      <LoadFieldsButton groupName={groupName} />
+      <SaveFieldsButton groupName={groupName} />
       <SimpleTable
         headerLabel="Variable list"
         id="worksheet-columns"
@@ -50,6 +51,7 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
           .map((field) => ({
             id: field.id,
             groupName: field.groupname,
+            order: field.grouporder,
             ...(field.simple_table_row as iSimpleTableRow),
           }))}
         fields={[
@@ -58,6 +60,12 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
             label: "Group name",
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
+          },
+          {
+            name: "order",
+            label: "Order",
+            sortFn: simpleTableSortFn,
+            renderFn: EditableFieldCell,
           },
           {
             name: "fieldName",
@@ -83,6 +91,9 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
       />
     </div>
   ) : (
-    <div>Waiting for sheet selection</div>
+    <>
+      <div>Waiting for sheet selection</div>
+      <LoadFieldsButton groupName="TPV data agreements" />
+    </>
   );
 }

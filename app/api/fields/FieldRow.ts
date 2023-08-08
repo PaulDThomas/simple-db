@@ -9,5 +9,6 @@ export interface field_simple_table_row extends iSimpleTableRow {
 export interface FieldRow {
   id: string;
   groupname: string;
+  grouporder: number;
   simple_table_row: field_simple_table_row;
 }

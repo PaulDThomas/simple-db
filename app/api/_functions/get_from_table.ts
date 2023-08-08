@@ -21,7 +21,7 @@ export async function get_from_table(
       sp["parent_level" ?? "null"],
     ]);
   } else if (sp["groupname"]) {
-    return run_query(`SELECT ${table} FROM ${table} WHERE groupname = $1`, [
+    return run_query(`SELECT * FROM ${table} WHERE groupname = $1`, [
       sp["groupname"],
     ]);
   } else {

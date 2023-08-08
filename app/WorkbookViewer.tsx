@@ -1,11 +1,7 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AppContext } from "./_context/AppContextProvider";
-import { IMPORT_DETAILS } from "./_context/appContextReducer";
-import FieldTable from "./FieldTable";
-import { getColumns } from "./_functions/getColumns";
-import WorkbookData from "./WorkbookData";
 
 export default function WorkbookViewer() {
   const { state } = useContext(AppContext);
@@ -29,8 +25,6 @@ export default function WorkbookViewer() {
           </ul>
         </div>
       )}
-      <FieldTable groupName="TPV data agreements" />
-      <WorkbookData />
     </>
   );
 }

@@ -15,7 +15,7 @@ export const PATCH = async (request: NextRequest) =>
   await patch_by_id("fields", "simple_table_row", request);
 
 export const POST = async (request: NextRequest) =>
-  await post_rows_to_table("fields", request);
+  await post_rows_to_table("fields", request, { includeOrder: true });
 
 export const PUT = async (request: NextRequest) =>
   await put_into_table("fields", request);

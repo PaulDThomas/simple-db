@@ -3,7 +3,10 @@ import { run_query } from "./run_query";
 
 export async function post_rows_to_table(
   table: string,
-  request: NextRequest
+  request: NextRequest,
+  options: {
+    includeOrder: boolean;
+  }
 ): Promise<NextResponse> {
   const inputJson = await request.json();
   if (inputJson.groupname && Array.isArray(inputJson.items)) {
@@ -13,8 +16,17 @@ export async function post_rows_to_table(
       ]);
     const newFields = inputJson.items as unknown[];
     const query =
-      `INSERT INTO ${table} (groupname, simple_table_row) VALUES ` +
-      newFields.map((_, i) => `($${i * 2 + 1},$${(i + 1) * 2})`).join(",");
+      `INSERT INTO ${table} (groupname, simple_table_row${
+        options.includeOrder ? ", grouporder" : ""
+      }) VALUES ` +
+      newFields
+        .map(
+          (_, i) =>
+            `($${i * 2 + 1},$${(i + 1) * 2}${
+              options.includeOrder ? `,${i + 1}` : ""
+            })`
+        )
+        .join(",");
     const queryParams = newFields.flatMap((item) => [
       inputJson.groupname,
       JSON.stringify(item),

@@ -3,6 +3,8 @@ import { PreState } from "./PreState";
 import SheetUploader from "./SheetUploader";
 import WorkbookViewer from "./WorkbookViewer";
 import styles from "./page.module.css";
+import WorkbookData from "./WorkbookData";
+import FieldTable from "./FieldTable";
 
 export default function Home() {
   return (
@@ -11,7 +13,9 @@ export default function Home() {
       <SheetUploader />
       <div style={{ position: "relative" }}>
         <Suspense fallback={<p>Loading...</p>}>
-          <WorkbookViewer />
+          <FieldTable groupName="TPV data agreements" />
+          {/* <WorkbookData /> */}
+          {/* <WorkbookViewer /> */}
         </Suspense>
       </div>
       <PreState />

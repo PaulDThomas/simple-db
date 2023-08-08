@@ -11,7 +11,6 @@ export const DeleteFieldButton = ({ rowData }: iSimpleTableCellRenderProps) => {
       onClick={async (e) => {
         e.stopPropagation();
         e.preventDefault();
-        console.log(`Delete ${rowData.id}`);
         await fetch("/api/fields", {
           method: "DELETE",
           headers: { "Context-type": "application/json" },
