@@ -1,7 +1,6 @@
 import { iSimpleTableRow } from "@asup/simple-table";
 import { WorkBook, read, utils } from "xlsx";
-import { ImportDetails } from "./appContextReducer";
-import { camelise } from "./camelise";
+import { camelise } from "../../functions/camelise";
 import { saveFields } from "./saveFields";
 
 /**
