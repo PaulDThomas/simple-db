@@ -11,7 +11,7 @@ interface tableRow {
 export async function post_rows_to_table(
   table: string,
   request: NextRequest,
-  options: {
+  options?: {
     includeOrder: boolean;
   }
 ): Promise<NextResponse> {
@@ -30,7 +30,7 @@ export async function post_rows_to_table(
     }
 
     let query = `INSERT INTO ${table} (id, groupname, simple_table_row`;
-    if (options.includeOrder) query += `, grouporder`;
+    if (options?.includeOrder) query += `, grouporder`;
     query += `) VALUES `;
     query += newRows
       .map(
@@ -40,7 +40,7 @@ export async function post_rows_to_table(
           },1,23)='00000000-aaaa-1111-bbbb' THEN uuid_generate_v4() ELSE $${
             i * 3 + 1
           }::uuid END,$${i * 3 + 2},$${i * 3 + 3}${
-            options.includeOrder ? `,${newRow.grouporder ?? i + 1}` : ""
+            options?.includeOrder ? `,${newRow.grouporder ?? i + 1}` : ""
           })`
       )
       .join(",");
@@ -48,7 +48,7 @@ export async function post_rows_to_table(
       " ON CONFLICT (id) DO UPDATE " +
       " SET groupname=EXCLUDED.groupname" +
       ", simple_table_row = EXCLUDED.simple_table_row";
-    if (options.includeOrder) query += ", grouporder=EXCLUDED.grouporder";
+    if (options?.includeOrder) query += ", grouporder=EXCLUDED.grouporder";
     query += ";";
 
     const queryParams = newRows.flatMap((newRow) => [

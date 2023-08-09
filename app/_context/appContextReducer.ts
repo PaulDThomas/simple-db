@@ -1,16 +1,16 @@
-import { iSimpleTableField, iSimpleTableRow } from "@asup/simple-table";
 import { WorkBook } from "xlsx";
 import { FieldRow } from "../api/fields/FieldRow";
+import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { addBlankField } from "./addBlankField";
 import { importWorksheet } from "./importWorksheet";
-import { RowDataRow } from "../api/rowdata/RowDataRow";
 
 export const ADD_BLANK_FIELD = "ADD_BLANK_FIELD";
 export const DELETE_FIELD = "DELETE_FIELD";
 export const IMPORT_DATA = "IMPORT_DATA";
 export const PROCESSING_COMPLETE = "PROCESSING_COMPLETE";
-export const SET_WORKBOOK = "SET_WORKBOOK";
 export const SET_FIELDS = "SET_FIELDS";
+export const SET_ROWS = "SET_ROWS";
+export const SET_WORKBOOK = "SET_WORKBOOK";
 export const UPDATE_CELL = "UPDATE_CELL";
 export const UPDATE_FIELD_CELL = "UPDATE_FIELD_CELL";
 
@@ -20,6 +20,7 @@ type Operation =
   | "IMPORT_DATA"
   | "PROCESSING_COMPLETE"
   | "SET_FIELDS"
+  | "SET_ROWS"
   | "SET_WORKBOOK"
   | "UPDATE_CELL"
   | "UPDATE_FIELD_CELL";
@@ -27,9 +28,10 @@ type Operation =
 export interface AppActionProps {
   operation: Operation;
   files?: FileList;
-  workbook?: WorkBook | null;
   groupName?: string;
   fields?: FieldRow[];
+  rows?: RowDataRow[];
+  workbook?: WorkBook | null;
   fieldName?: string;
   rowId?: string;
   newValue?: unknown;
@@ -88,7 +90,14 @@ export const appContextReducer = (
         newState.fields = action.fields;
         return newState;
       } else {
-        throw `APPCONTEXTREDUCER: ${action.operation}: Where is the workbook?`;
+        throw `APPCONTEXTREDUCER: ${action.operation}: Where are the fields?`;
+      }
+    case "SET_ROWS":
+      if (action.rows) {
+        newState.rows = action.rows;
+        return newState;
+      } else {
+        throw `APPCONTEXTREDUCER: ${action.operation}: Where are the rows?`;
       }
     case "SET_WORKBOOK":
       if (action.workbook) {

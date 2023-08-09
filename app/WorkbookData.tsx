@@ -2,8 +2,14 @@
 
 import { useContext } from "react";
 import { AppContext } from "./_context/AppContextProvider";
-import { SimpleTable, simpleTableSortFn } from "@asup/simple-table";
+import {
+  SimpleTable,
+  iSimpleTableRow,
+  simpleTableSortFn,
+} from "@asup/simple-table";
 import EditableFieldCell from "./EditableFieldCell";
+import { SaveRowsButton } from "./SaveRowsButton";
+import { LoadRowsButton } from "./LoadRowsButton";
 
 export default function WorkbookData() {
   const { state } = useContext(AppContext);
@@ -13,12 +19,15 @@ export default function WorkbookData() {
       style={{
         width: "90vw",
         minHeight: "200px",
-        height: "30vh",
+        height: "40vh",
         border: "1px solid black",
         borderRadius: "4px",
+        marginTop: "2rem",
+        paddingBottom: "2rem",
       }}
     >
-      {/* Some data */}
+      <LoadRowsButton />
+      <SaveRowsButton />
       <SimpleTable
         headerLabel={`Data from ${
           state.workbook?.SheetNames[0] ?? "some spreadhseet"
@@ -27,17 +36,26 @@ export default function WorkbookData() {
         keyField="id"
         mainBackgroundColor="inherit"
         headerBackgroundColor="inherit"
-        fields={state.fields.map((wf) => ({
-          name: wf.simple_table_row.worksheetFieldName,
-          label: wf.simple_table_row.fieldLabel,
+        fields={state.fields.map((field) => ({
+          name: field.simple_table_row.fieldName,
+          label: field.simple_table_row.fieldLabel,
           sortFn: simpleTableSortFn,
           canColumnFilter: true,
           renderFn: EditableFieldCell,
         }))}
-        data={state.rows}
+        data={state.rows.map(
+          (row) =>
+            ({
+              id: row.id,
+              ...row.simple_table_row,
+            } as iSimpleTableRow)
+        )}
       />
     </div>
   ) : (
-    <div>Waiting for sheet data</div>
+    <>
+      <div>Waiting for sheet data</div>
+      <LoadRowsButton />
+    </>
   );
 }

@@ -39,7 +39,7 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
       style={{
         width: "90vw",
         minHeight: "200px",
-        height: "60vh",
+        height: "30vh",
       }}
     >
       <LoadFieldsButton />

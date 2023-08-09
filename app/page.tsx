@@ -9,12 +9,12 @@ import FieldTable from "./FieldTable";
 export default function Home() {
   return (
     <main className={styles.main}>
-      <h1>MOSAIC simple DB host</h1>
+      <h1>Simple DB host</h1>
       <SheetUploader />
       <div style={{ position: "relative" }}>
         <Suspense fallback={<p>Loading...</p>}>
           <FieldTable groupName="TPV data agreements" />
-          {/* <WorkbookData /> */}
+          <WorkbookData />
           {/* <WorkbookViewer /> */}
         </Suspense>
       </div>
