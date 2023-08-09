@@ -15,10 +15,7 @@ export const SaveFieldsButton = ({ groupName }: SaveFieldsButtonProps) => {
         onClick={async (e) => {
           e.stopPropagation();
           e.preventDefault();
-          saveFields(
-            groupName,
-            (state.fields as FieldRow[]).map((field) => field.simple_table_row)
-          );
+          saveFields(state.fields as FieldRow[]);
         }}
       >
         Save

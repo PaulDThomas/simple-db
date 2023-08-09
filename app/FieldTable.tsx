@@ -13,6 +13,7 @@ import { SaveFieldsButton } from "./SaveFieldsButton";
 import { AppContext } from "./_context/AppContextProvider";
 import { SET_FIELDS } from "./_context/appContextReducer";
 import { retrieveFields } from "./_functions/retreiveFields";
+import { AddFieldButton } from "./AddFieldButton";
 
 interface WorkbookColumnsProps {
   groupName: string;
@@ -41,6 +42,7 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
       }}
     >
       <LoadFieldsButton groupName={groupName} />
+      <AddFieldButton groupName={groupName} />
       <SaveFieldsButton groupName={groupName} />
       <SimpleTable
         headerLabel="Variable list"

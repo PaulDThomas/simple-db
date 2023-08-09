@@ -146,6 +146,38 @@ VALUES
   )
 ;
 
+INSERT INTO
+  rowdata (id, parent_id, simple_table_row, groupname)
+VALUES
+  (
+    CASE
+      WHEN '00000000-aaaa-1111-bbbb-222222222222' = '00000000-aaaa-1111-bbbb-222222222222' THEN uuid_generate_v4 ()
+      ELSE '00000000-aaaa-1111-bbbb-222222222222'
+    END,
+    '7caafe7e-5e52-4170-9147-679ac40956c7',
+    '{"spooge":"caterpillar, flappyqq"}',
+    'G10'
+  ),
+  (
+    '77f16113-b8b1-4cca-a957-c1ad6286bdc5',
+    '7caafe7e-5e52-4170-9147-679ac40956c7',
+    '{"spooge":"caterpillar, flappy"}',
+    'G9'
+  ),
+  (
+    'f61aec85-8dea-43da-bacf-6c84cfaa38d2',
+    '151c56c9-893d-43ad-a296-b1b3e9345aa7',
+    '{"spooge":"duck, quackers"}',
+    'G9'
+  ) ON CONFLICT (id)
+DO
+UPDATE
+SET
+  parent_id = EXCLUDED.parent_id,
+  simple_table_row = EXCLUDED.simple_table_row,
+  groupname = EXCLUDED.groupname
+;
+
 SELECT
   *
 FROM
