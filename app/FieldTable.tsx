@@ -14,6 +14,7 @@ import { AppContext } from "./_context/AppContextProvider";
 import { SET_FIELDS } from "./_context/appContextReducer";
 import { retrieveFields } from "./_functions/retreiveFields";
 import { AddFieldButton } from "./AddFieldButton";
+import { ImportDataButton } from "./ImportDataButton";
 
 interface WorkbookColumnsProps {
   groupName: string;
@@ -41,15 +42,16 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
         height: "60vh",
       }}
     >
-      <LoadFieldsButton groupName={groupName} />
+      <LoadFieldsButton />
       <AddFieldButton groupName={groupName} />
-      <SaveFieldsButton groupName={groupName} />
+      <SaveFieldsButton />
+      <ImportDataButton />
       <SimpleTable
         headerLabel="Variable list"
         id="worksheet-columns"
         keyField={"id"}
         data={state.fields
-          .filter((field) => (field.groupname = groupName))
+          .sort((a, b) => a.grouporder - b.grouporder)
           .map((field) => ({
             id: field.id,
             groupName: field.groupname,
@@ -62,6 +64,7 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
             label: "Group name",
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
+            renderFn: EditableFieldCell,
           },
           {
             name: "order",
@@ -95,7 +98,7 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
   ) : (
     <>
       <div>Waiting for sheet selection</div>
-      <LoadFieldsButton groupName="TPV data agreements" />
+      <LoadFieldsButton />
     </>
   );
 }

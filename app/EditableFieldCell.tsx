@@ -1,7 +1,15 @@
 "use client";
 
 import { iSimpleTableCellRenderProps } from "@asup/simple-table";
-import { useContext, useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  FocusEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { AppContext } from "./_context/AppContextProvider";
 import { UPDATE_FIELD_CELL } from "./_context/appContextReducer";
 
@@ -17,19 +25,42 @@ export default function EditableFieldCell({
   }, [rowData, cellField]);
 
   // Debounce update
+  const timer = useRef<NodeJS.Timeout | null>(null);
+  const doUpdate = useCallback(() => {
+    console.log("Do update");
+    dispatch({
+      operation: UPDATE_FIELD_CELL,
+      rowId: rowData.id as string,
+      fieldName: cellField,
+      newValue: currentValue,
+    });
+  }, [cellField, currentValue, dispatch, rowData.id]);
   useEffect(() => {
-    const update = setTimeout(() => {
-      if (currentValue !== rowData[cellField]) {
-        dispatch({
-          operation: UPDATE_FIELD_CELL,
-          rowId: rowData.id as string,
-          fieldName: cellField,
-          newValue: currentValue,
-        });
-      }
-    }, 1000);
-    return () => clearTimeout(update);
-  }, [cellField, currentValue, dispatch, rowData]);
+    if (currentValue !== rowData[cellField])
+      timer.current = setTimeout(doUpdate, 1000);
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, [cellField, currentValue, doUpdate, rowData]);
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    newValue: Date | number | string
+  ) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentValue(newValue);
+  };
+  const handleBlur = (
+    e: FocusEvent<HTMLInputElement>,
+    newValue: Date | number | string
+  ) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (timer.current) clearTimeout(timer.current);
+    setCurrentValue(newValue);
+    doUpdate();
+  };
 
   return (
     <div
@@ -44,32 +75,23 @@ export default function EditableFieldCell({
           style={{ width: "calc(100% - 4px)" }}
           type="date"
           value={currentValue.toISOString().slice(0, 10)}
-          onChange={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            setCurrentValue(new Date(e.currentTarget.value));
-          }}
+          onChange={(e) => handleChange(e, new Date(e.currentTarget.value))}
+          onBlur={(e) => handleBlur(e, new Date(e.currentTarget.value))}
         />
       ) : typeof currentValue === "number" ? (
         <input
           style={{ width: "calc(100% - 4px)" }}
           type="number"
           value={currentValue as number}
-          onChange={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            setCurrentValue(parseFloat(e.currentTarget.value));
-          }}
+          onChange={(e) => handleChange(e, parseFloat(e.currentTarget.value))}
+          onBlur={(e) => handleBlur(e, parseFloat(e.currentTarget.value))}
         />
       ) : (
         <input
           style={{ width: "calc(100% - 4px)" }}
           value={`${currentValue ?? ""}`}
-          onChange={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            setCurrentValue(e.currentTarget.value);
-          }}
+          onChange={(e) => handleChange(e, e.currentTarget.value)}
+          onBlur={(e) => handleBlur(e, e.target.value)}
         />
       )}
     </div>

@@ -3,11 +3,7 @@ import { AppContext } from "./_context/AppContextProvider";
 import { saveFields } from "./_functions/saveFields";
 import { FieldRow } from "./api/fields/FieldRow";
 
-interface SaveFieldsButtonProps {
-  groupName: string;
-}
-
-export const SaveFieldsButton = ({ groupName }: SaveFieldsButtonProps) => {
+export const SaveFieldsButton = () => {
   const { state } = useContext(AppContext);
   return (
     state.fields && (
