@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { AppContext } from "./_context/AppContextProvider";
+import { AppContext } from "../_context/AppContextProvider";
 
 export default function EditableCell(
   { cellField, rowData }: iSimpleTableCellRenderProps,

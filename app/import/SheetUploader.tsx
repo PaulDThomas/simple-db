@@ -1,12 +1,12 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { AppContext } from "./_context/AppContextProvider";
+import { AppContext } from "../_context/AppContextProvider";
 import {
   PROCESSING_COMPLETE,
   SET_WORKBOOK,
-} from "./_context/appContextReducer";
-import { saveWorkbook } from "./_functions/saveWorkbook";
+} from "../_context/appContextReducer";
+import { saveWorkbook } from "../_functions/saveWorkbook";
 
 export default function SheetUploader() {
   const { state, dispatch } = useContext(AppContext);

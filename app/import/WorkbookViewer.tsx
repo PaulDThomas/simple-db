@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AppContext } from "./_context/AppContextProvider";
+import { AppContext } from "../_context/AppContextProvider";
 
 export default function WorkbookViewer() {
   const { state } = useContext(AppContext);

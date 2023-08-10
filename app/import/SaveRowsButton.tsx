@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { AppContext } from "./_context/AppContextProvider";
-import { saveRows } from "./_functions/saveRows";
-import { RowDataRow } from "./api/rowdata/RowDataRow";
+import { AppContext } from "../_context/AppContextProvider";
+import { saveRows } from "../_functions/saveRows";
+import { RowDataRow } from "../api/rowdata/RowDataRow";
 
 export const SaveRowsButton = () => {
   const { state } = useContext(AppContext);

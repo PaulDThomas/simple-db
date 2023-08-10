@@ -1,7 +1,7 @@
 import { iSimpleTableCellRenderProps } from "@asup/simple-table";
 import { useContext } from "react";
-import { AppContext } from "./_context/AppContextProvider";
-import { DELETE_FIELD } from "./_context/appContextReducer";
+import { AppContext } from "../_context/AppContextProvider";
+import { DELETE_FIELD } from "../_context/appContextReducer";
 
 export const DeleteFieldButton = ({ rowData }: iSimpleTableCellRenderProps) => {
   const { dispatch } = useContext(AppContext);

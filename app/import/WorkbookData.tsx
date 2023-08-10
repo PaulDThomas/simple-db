@@ -11,8 +11,8 @@ import { useContext } from "react";
 import EditableCell from "./EditableCell";
 import { LoadRowsButton } from "./LoadRowsButton";
 import { SaveRowsButton } from "./SaveRowsButton";
-import { AppContext } from "./_context/AppContextProvider";
-import { UPDATE_CELL } from "./_context/appContextReducer";
+import { AppContext } from "../_context/AppContextProvider";
+import { UPDATE_CELL } from "../_context/appContextReducer";
 
 export default function WorkbookData() {
   const { state } = useContext(AppContext);

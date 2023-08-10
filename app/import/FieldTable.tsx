@@ -11,20 +11,16 @@ import EditableCell from "./EditableCell";
 import { ImportDataButton } from "./ImportDataButton";
 import { LoadFieldsButton } from "./LoadFieldsButton";
 import { SaveFieldsButton } from "./SaveFieldsButton";
-import { AppContext } from "./_context/AppContextProvider";
-import { SET_FIELDS, UPDATE_FIELD_CELL } from "./_context/appContextReducer";
-import { retrieveFields } from "./_functions/retreiveFields";
+import { AppContext } from "../_context/AppContextProvider";
+import { SET_FIELDS, UPDATE_FIELD_CELL } from "../_context/appContextReducer";
+import { retrieveFields } from "../_functions/retreiveFields";
 
-interface WorkbookColumnsProps {
-  groupName: string;
-}
-
-export default function FieldTable({ groupName }: WorkbookColumnsProps) {
+export default function FieldTable() {
   const { state, dispatch } = useContext(AppContext);
   // const [tableData, setTableData] = useState<fieldRow[] | null>(null);
 
   const newData = useCallback(async () => {
-    const newData = await retrieveFields("TPV data agreements");
+    const newData = await retrieveFields();
     dispatch({ operation: SET_FIELDS, fields: newData });
   }, [dispatch]);
   useEffect(() => {
@@ -42,7 +38,7 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
       }}
     >
       <LoadFieldsButton />
-      <AddFieldButton groupName={groupName} />
+      <AddFieldButton />
       <SaveFieldsButton />
       <ImportDataButton />
       <SimpleTable

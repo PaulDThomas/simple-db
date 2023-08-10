@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { AppContext } from "./_context/AppContextProvider";
-import { SET_ROWS } from "./_context/appContextReducer";
-import { retrieveRows } from "./_functions/retreiveRows";
+import { AppContext } from "../_context/AppContextProvider";
+import { SET_ROWS } from "../_context/appContextReducer";
+import { retrieveRows } from "../_functions/retreiveRows";
 
 export const LoadRowsButton = () => {
   const { dispatch } = useContext(AppContext);
