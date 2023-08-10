@@ -6,15 +6,14 @@ import {
   simpleTableSortFn,
 } from "@asup/simple-table";
 import { useCallback, useContext, useEffect } from "react";
-import { DeleteFieldButton } from "./DeleteFieldButton";
-import EditableFieldCell from "./EditableFieldCell";
+import { AddFieldButton } from "./AddFieldButton";
+import EditableCell from "./EditableCell";
+import { ImportDataButton } from "./ImportDataButton";
 import { LoadFieldsButton } from "./LoadFieldsButton";
 import { SaveFieldsButton } from "./SaveFieldsButton";
 import { AppContext } from "./_context/AppContextProvider";
-import { SET_FIELDS } from "./_context/appContextReducer";
+import { SET_FIELDS, UPDATE_FIELD_CELL } from "./_context/appContextReducer";
 import { retrieveFields } from "./_functions/retreiveFields";
-import { AddFieldButton } from "./AddFieldButton";
-import { ImportDataButton } from "./ImportDataButton";
 
 interface WorkbookColumnsProps {
   groupName: string;
@@ -64,33 +63,33 @@ export default function FieldTable({ groupName }: WorkbookColumnsProps) {
             label: "Group name",
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
-            renderFn: EditableFieldCell,
+            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
           },
           {
             name: "order",
             label: "Order",
             sortFn: simpleTableSortFn,
-            renderFn: EditableFieldCell,
+            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
           },
           {
             name: "fieldName",
             label: "Name",
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
-            renderFn: EditableFieldCell,
+            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
           },
           {
             name: "fieldLabel",
             label: "Label",
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
-            renderFn: EditableFieldCell,
+            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
           },
           {
             name: "id",
             label: "Delete?",
             width: "20px",
-            renderFn: DeleteFieldButton,
+            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
           },
         ]}
       />

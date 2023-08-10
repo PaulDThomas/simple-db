@@ -115,7 +115,7 @@ export const appContextReducer = (
       if (action.rowId && action.fieldName && newState.rows) {
         const newRow = newState.rows.find((r) => r.id === action.rowId);
         if (newRow) {
-          newRow[action.fieldName] = action.newValue;
+          newRow.simple_table_row[action.fieldName] = action.newValue;
         }
         return newState;
       } else {

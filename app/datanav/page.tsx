@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
@@ -16,7 +15,7 @@ export default function DataNav() {
 
   const fetchIds = useCallback(async (id: string | null) => {
     const url = `/api/rowdata${
-      id ? `?family_id=${id}&child_level=1&parent_level=9` : ""
+      id ? `?family_id=${id}&child_level=9&parent_level=9` : ""
     }`;
     const response = await fetch(url);
     if (response.status === 200) {

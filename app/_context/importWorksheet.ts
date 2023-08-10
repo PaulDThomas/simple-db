@@ -34,6 +34,10 @@ export const importWorksheet = (
           value:
             typeof ir[field.simple_table_row.worksheetFieldName] === "string"
               ? (ir[field.simple_table_row.worksheetFieldName] as string).trim()
+              : ir[field.simple_table_row.worksheetFieldName] instanceof Date
+              ? (ir[field.simple_table_row.worksheetFieldName] as Date)
+                  .toISOString()
+                  .slice(0, 10)
               : ir[field.simple_table_row.worksheetFieldName],
         }))
         .reduce(

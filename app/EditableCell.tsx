@@ -11,12 +11,11 @@ import {
   useState,
 } from "react";
 import { AppContext } from "./_context/AppContextProvider";
-import { UPDATE_FIELD_CELL } from "./_context/appContextReducer";
 
-export default function EditableFieldCell({
-  cellField,
-  rowData,
-}: iSimpleTableCellRenderProps): JSX.Element {
+export default function EditableCell(
+  { cellField, rowData }: iSimpleTableCellRenderProps,
+  operation: "UPDATE_CELL" | "UPDATE_FIELD_CELL"
+): JSX.Element {
   const { dispatch } = useContext(AppContext);
 
   const [currentValue, setCurrentValue] = useState<unknown>();
@@ -29,7 +28,7 @@ export default function EditableFieldCell({
   const doUpdate = useCallback(() => {
     console.log("Do update");
     dispatch({
-      operation: UPDATE_FIELD_CELL,
+      operation,
       rowId: rowData.id as string,
       fieldName: cellField,
       newValue: currentValue,
@@ -70,13 +69,19 @@ export default function EditableFieldCell({
           currentValue === rowData[cellField] ? "inherit" : "greenyellow",
       }}
     >
-      {currentValue instanceof Date ? (
+      {currentValue instanceof Date ||
+      (typeof currentValue === "string" &&
+        /^\d{4}-\d{2}-\d{2}/.test(currentValue)) ? (
         <input
           style={{ width: "calc(100% - 4px)" }}
           type="date"
-          value={currentValue.toISOString().slice(0, 10)}
-          onChange={(e) => handleChange(e, new Date(e.currentTarget.value))}
-          onBlur={(e) => handleBlur(e, new Date(e.currentTarget.value))}
+          value={
+            typeof currentValue === "string"
+              ? currentValue.slice(0, 10)
+              : currentValue.toISOString().slice(0, 10)
+          }
+          onChange={(e) => handleChange(e, e.currentTarget.value)}
+          onBlur={(e) => handleBlur(e, e.currentTarget.value)}
         />
       ) : typeof currentValue === "number" ? (
         <input

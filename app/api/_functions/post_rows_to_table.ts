@@ -5,6 +5,7 @@ interface tableRow {
   id: string;
   groupname: string;
   grouporder?: number;
+  parent_id?: string;
   simple_table_row: object;
 }
 
@@ -12,7 +13,8 @@ export async function post_rows_to_table(
   table: string,
   request: NextRequest,
   options?: {
-    includeOrder: boolean;
+    includeOrder?: boolean;
+    includeParent?: boolean;
   }
 ): Promise<NextResponse> {
   const inputJson = await request.json();
@@ -31,6 +33,7 @@ export async function post_rows_to_table(
 
     let query = `INSERT INTO ${table} (id, groupname, simple_table_row`;
     if (options?.includeOrder) query += `, grouporder`;
+    if (options?.includeParent) query += `, parent_id`;
     query += `) VALUES `;
     query += newRows
       .map(
@@ -41,6 +44,10 @@ export async function post_rows_to_table(
             i * 3 + 1
           }::uuid END,$${i * 3 + 2},$${i * 3 + 3}${
             options?.includeOrder ? `,${newRow.grouporder ?? i + 1}` : ""
+          }${
+            options?.includeParent
+              ? `,${newRow.parent_id ? `'${newRow.parent_id}'` : "null"}`
+              : ""
           })`
       )
       .join(",");
@@ -49,6 +56,7 @@ export async function post_rows_to_table(
       " SET groupname=EXCLUDED.groupname" +
       ", simple_table_row = EXCLUDED.simple_table_row";
     if (options?.includeOrder) query += ", grouporder=EXCLUDED.grouporder";
+    if (options?.includeParent) query += ", parent_id=EXCLUDED.parent_id";
     query += ";";
 
     const queryParams = newRows.flatMap((newRow) => [

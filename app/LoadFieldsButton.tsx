@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { retrieveFields } from "./_functions/retreiveFields";
 import { AppContext } from "./_context/AppContextProvider";
 import { SET_FIELDS } from "./_context/appContextReducer";
+import { retrieveFields } from "./_functions/retreiveFields";
 
 export const LoadFieldsButton = () => {
   const { dispatch } = useContext(AppContext);

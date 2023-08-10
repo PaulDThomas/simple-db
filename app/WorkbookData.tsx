@@ -1,15 +1,18 @@
 "use client";
 
-import { useContext } from "react";
-import { AppContext } from "./_context/AppContextProvider";
 import {
   SimpleTable,
+  iSimpleTableCellRenderProps,
   iSimpleTableRow,
   simpleTableSortFn,
 } from "@asup/simple-table";
-import EditableFieldCell from "./EditableFieldCell";
-import { SaveRowsButton } from "./SaveRowsButton";
+import Link from "next/link";
+import { useContext } from "react";
+import EditableCell from "./EditableCell";
 import { LoadRowsButton } from "./LoadRowsButton";
+import { SaveRowsButton } from "./SaveRowsButton";
+import { AppContext } from "./_context/AppContextProvider";
+import { UPDATE_CELL } from "./_context/appContextReducer";
 
 export default function WorkbookData() {
   const { state } = useContext(AppContext);
@@ -36,13 +39,27 @@ export default function WorkbookData() {
         keyField="id"
         mainBackgroundColor="inherit"
         headerBackgroundColor="inherit"
-        fields={state.fields.map((field) => ({
-          name: field.simple_table_row.fieldName,
-          label: field.simple_table_row.fieldLabel,
-          sortFn: simpleTableSortFn,
-          canColumnFilter: true,
-          renderFn: EditableFieldCell,
-        }))}
+        fields={[
+          {
+            name: "id",
+            label: "ID",
+            renderFn: ({ rowData }) => {
+              return (
+                <Link href={`/datanav?id=${rowData.id}`}>
+                  {rowData.id as string}
+                </Link>
+              );
+            },
+          },
+          ...state.fields.map((field) => ({
+            name: field.simple_table_row.fieldName,
+            label: field.simple_table_row.fieldLabel,
+            sortFn: simpleTableSortFn,
+            canColumnFilter: true,
+            renderFn: (a: iSimpleTableCellRenderProps) =>
+              EditableCell(a, UPDATE_CELL),
+          })),
+        ]}
         data={state.rows.map(
           (row) =>
             ({
