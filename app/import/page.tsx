@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import SheetUploader from "./SheetUploader";
 import WorkbookViewer from "./WorkbookViewer";
 import styles from "../page.module.css";
-import WorkbookData from "./WorkbookData";
+import RowDataTable from "./RowDataTable";
 import FieldTable from "./FieldTable";
 
 export default function Home() {
@@ -14,7 +14,7 @@ export default function Home() {
         <Suspense fallback={<p>Loading...</p>}>
           <WorkbookViewer />
           <FieldTable />
-          <WorkbookData />
+          <RowDataTable />
         </Suspense>
       </div>
     </main>

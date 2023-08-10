@@ -3,7 +3,7 @@ import { AppContext } from "../_context/AppContextProvider";
 import { IMPORT_DATA } from "../_context/appContextReducer";
 
 export const ImportDataButton = () => {
-  const { dispatch } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
 
   return (
     <button
@@ -12,6 +12,7 @@ export const ImportDataButton = () => {
         e.preventDefault();
         dispatch({ operation: IMPORT_DATA });
       }}
+      disabled={!state.workbook}
     >
       Import data
     </button>

@@ -14,7 +14,7 @@ import { SaveRowsButton } from "./SaveRowsButton";
 import { AppContext } from "../_context/AppContextProvider";
 import { UPDATE_CELL } from "../_context/appContextReducer";
 
-export default function WorkbookData() {
+export default function RowDataTable() {
   const { state } = useContext(AppContext);
 
   return state.fields && state.rows && state.fields.length > 0 ? (
@@ -45,7 +45,7 @@ export default function WorkbookData() {
             label: "ID",
             renderFn: ({ rowData }) => {
               return (
-                <Link href={`/datanav?id=${rowData.id}`}>
+                <Link href={`/datanav?id=${rowData.id}`} target="_blank">
                   {rowData.id as string}
                 </Link>
               );
