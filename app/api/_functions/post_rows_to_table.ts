@@ -28,7 +28,6 @@ export async function post_rows_to_table(
         ","
       )})`;
       const delResult = await run_query(delQuery, keepIds);
-      // console.log(delResult);
     }
 
     let query = `INSERT INTO ${table} (id, groupname, simple_table_row`;
@@ -65,7 +64,6 @@ export async function post_rows_to_table(
       JSON.stringify(newRow.simple_table_row),
     ]);
     const result = await run_query(query, queryParams);
-    console.log(result);
 
     return NextResponse.json(
       {

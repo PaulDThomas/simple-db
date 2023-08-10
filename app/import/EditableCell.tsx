@@ -26,7 +26,6 @@ export default function EditableCell(
   // Debounce update
   const timer = useRef<NodeJS.Timeout | null>(null);
   const doUpdate = useCallback(() => {
-    console.log("Do update");
     dispatch({
       operation,
       rowId: rowData.id as string,

@@ -4,7 +4,7 @@ import { WorkSheet, utils } from "xlsx";
 import { FieldRow } from "../api/fields/FieldRow";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
 
-export const importWorksheet = (
+export const importRowData = (
   fields: FieldRow[],
   worksheet: WorkSheet
 ): RowDataRow[] => {
@@ -91,6 +91,5 @@ export const importWorksheet = (
   const ret = groups.flatMap((g) =>
     g.rows.map((r) => ({ groupname: g.groupName, ...r }))
   );
-  console.log(ret);
   return ret;
 };

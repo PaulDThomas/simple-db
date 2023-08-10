@@ -14,6 +14,7 @@ import { SaveFieldsButton } from "./SaveFieldsButton";
 import { AppContext } from "../_context/AppContextProvider";
 import { SET_FIELDS, UPDATE_FIELD_CELL } from "../_context/appContextReducer";
 import { retrieveFields } from "../_functions/retreiveFields";
+import { DeleteFieldButton } from "./DeleteFieldButton";
 
 export default function FieldTable() {
   const { state, dispatch } = useContext(AppContext);
@@ -34,61 +35,62 @@ export default function FieldTable() {
       style={{
         width: "90vw",
         minHeight: "200px",
-        height: "30vh",
       }}
     >
       <LoadFieldsButton />
       <AddFieldButton />
       <SaveFieldsButton />
       <ImportDataButton />
-      <SimpleTable
-        headerLabel="Variable list"
-        id="worksheet-columns"
-        keyField={"id"}
-        data={state.fields
-          .sort((a, b) => a.grouporder - b.grouporder)
-          .map((field) => ({
-            id: field.id,
-            groupName: field.groupname,
-            order: field.grouporder,
-            ...(field.simple_table_row as iSimpleTableRow),
-          }))}
-        fields={[
-          {
-            name: "groupName",
-            label: "Group name",
-            sortFn: simpleTableSortFn,
-            canColumnFilter: true,
-            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
-          },
-          {
-            name: "order",
-            label: "Order",
-            sortFn: simpleTableSortFn,
-            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
-          },
-          {
-            name: "fieldName",
-            label: "Name",
-            sortFn: simpleTableSortFn,
-            canColumnFilter: true,
-            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
-          },
-          {
-            name: "fieldLabel",
-            label: "Label",
-            sortFn: simpleTableSortFn,
-            canColumnFilter: true,
-            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
-          },
-          {
-            name: "id",
-            label: "Delete?",
-            width: "20px",
-            renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
-          },
-        ]}
-      />
+      <div style={{ minHeight: "150px" }}>
+        <SimpleTable
+          headerLabel="Variable list"
+          id="field-table"
+          keyField={"id"}
+          data={state.fields
+            .sort((a, b) => a.grouporder - b.grouporder)
+            .map((field) => ({
+              id: field.id,
+              groupName: field.groupname,
+              order: field.grouporder,
+              ...(field.simple_table_row as iSimpleTableRow),
+            }))}
+          fields={[
+            {
+              name: "groupName",
+              label: "Group name",
+              sortFn: simpleTableSortFn,
+              canColumnFilter: true,
+              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+            },
+            {
+              name: "order",
+              label: "Order",
+              sortFn: simpleTableSortFn,
+              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+            },
+            {
+              name: "fieldName",
+              label: "Name",
+              sortFn: simpleTableSortFn,
+              canColumnFilter: true,
+              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+            },
+            {
+              name: "fieldLabel",
+              label: "Label",
+              sortFn: simpleTableSortFn,
+              canColumnFilter: true,
+              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+            },
+            {
+              name: "id",
+              label: "Delete?",
+              width: "20px",
+              renderFn: DeleteFieldButton,
+            },
+          ]}
+        />
+      </div>
     </div>
   ) : (
     <>

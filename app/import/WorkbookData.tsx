@@ -35,7 +35,7 @@ export default function WorkbookData() {
         headerLabel={`Data from ${
           state.workbook?.SheetNames[0] ?? "some spreadhseet"
         }`}
-        id="worksheet-data"
+        id="rowdata-table"
         keyField="id"
         mainBackgroundColor="inherit"
         headerBackgroundColor="inherit"

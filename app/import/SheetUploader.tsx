@@ -3,6 +3,7 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../_context/AppContextProvider";
 import {
+  IMPORT_FIELDS,
   PROCESSING_COMPLETE,
   SET_WORKBOOK,
 } from "../_context/appContextReducer";
@@ -43,6 +44,23 @@ export default function SheetUploader() {
             }
           }}
         />
+      )}
+      {loadedFile !== "" && (
+        <span>
+          <button
+            style={{ marginLeft: "1rem" }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              dispatch({
+                operation: IMPORT_FIELDS,
+                fieldName: "TPV data agreements",
+              });
+            }}
+          >
+            Import fields
+          </button>
+        </span>
       )}
     </div>
   );

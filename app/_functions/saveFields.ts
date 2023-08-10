@@ -11,7 +11,6 @@ export async function saveFields(newRows: FieldRow[]) {
       }),
     });
     const response = await request.json();
-    // console.log(response);
   } catch (error) {
     console.warn(error);
   }

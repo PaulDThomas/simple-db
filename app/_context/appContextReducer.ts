@@ -2,11 +2,13 @@ import { WorkBook } from "xlsx";
 import { FieldRow } from "../api/fields/FieldRow";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { addBlankField } from "./addBlankField";
-import { importWorksheet } from "./importWorksheet";
+import { importRowData } from "./importRowData";
+import { importFields } from "./importFields";
 
 export const ADD_BLANK_FIELD = "ADD_BLANK_FIELD";
 export const DELETE_FIELD = "DELETE_FIELD";
 export const IMPORT_DATA = "IMPORT_DATA";
+export const IMPORT_FIELDS = "IMPORT_FIELDS";
 export const PROCESSING_COMPLETE = "PROCESSING_COMPLETE";
 export const SET_FIELDS = "SET_FIELDS";
 export const SET_ROWS = "SET_ROWS";
@@ -18,6 +20,7 @@ type Operation =
   | "ADD_BLANK_FIELD"
   | "DELETE_FIELD"
   | "IMPORT_DATA"
+  | "IMPORT_FIELDS"
   | "PROCESSING_COMPLETE"
   | "SET_FIELDS"
   | "SET_ROWS"
@@ -73,17 +76,25 @@ export const appContextReducer = (
       }
     case "IMPORT_DATA": {
       if (newState.fields && newState.workbook) {
-        console.log("Importing");
-        newState.rows = importWorksheet(
+        newState.rows = importRowData(
           newState.fields,
           newState.workbook.Sheets[newState.workbook.SheetNames[0]]
         );
-        console.log("Import done");
         return newState;
       } else {
         throw `APPCONTEXTREDUCER: ${action.operation}: What are the import details?`;
       }
-      return newState;
+    }
+    case "IMPORT_FIELDS": {
+      if (newState.workbook && action.fieldName) {
+        newState.fields = importFields(
+          action.fieldName,
+          newState.workbook.Sheets[newState.workbook.SheetNames[0]]
+        );
+        return newState;
+      } else {
+        throw `APPCONTEXTREDUCER: ${action.operation}: What am I importing this into?`;
+      }
     }
     case "SET_FIELDS":
       if (action.fields) {
