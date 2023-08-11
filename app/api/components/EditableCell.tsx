@@ -1,30 +1,31 @@
 "use client";
 
-import { iSimpleTableCellRenderProps } from "@asup/simple-table";
 import {
   ChangeEvent,
-  FocusEvent,
   useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { AppContext } from "../_context/AppContextProvider";
+import { AppContext } from "../../_context/AppContextProvider";
+import { iCellRenderProps } from "./iCellRenderProps";
+import _ from "lodash";
 
-export default function EditableCell(
-  { cellField, rowData }: iSimpleTableCellRenderProps,
-  operation: "UPDATE_CELL" | "UPDATE_FIELD_CELL"
-): JSX.Element {
+export default function EditableCell({
+  cellField,
+  rowData,
+  operation,
+  forceType,
+}: iCellRenderProps): JSX.Element {
   const { dispatch } = useContext(AppContext);
 
   const [currentValue, setCurrentValue] = useState<unknown>();
-  useEffect(() => {
-    setCurrentValue(rowData[cellField] as string);
-  }, [rowData, cellField]);
 
   // Debounce update
+  const toDoUpdate = useRef<boolean>(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
+  const timerVal = useRef<number>(1000);
   const doUpdate = useCallback(() => {
     dispatch({
       operation,
@@ -34,8 +35,17 @@ export default function EditableCell(
     });
   }, [cellField, currentValue, dispatch, rowData.id]);
   useEffect(() => {
-    if (currentValue !== rowData[cellField])
-      timer.current = setTimeout(doUpdate, 1000);
+    if (!_.isEqual(rowData[cellField], currentValue)) {
+      // Update from interaction
+      if (toDoUpdate.current) {
+        timer.current = setTimeout(doUpdate, timerVal.current);
+        toDoUpdate.current = false;
+      }
+      // Update from rowData
+      else {
+        setCurrentValue(rowData[cellField]);
+      }
+    }
     return () => {
       if (timer.current) clearTimeout(timer.current);
     };
@@ -43,19 +53,23 @@ export default function EditableCell(
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
-    newValue: Date | number | string
+    newValue: Date | number | string | boolean,
+    thisTimer = 1000
   ) => {
     e.stopPropagation();
     e.preventDefault();
+    toDoUpdate.current = true;
+    timerVal.current = thisTimer;
     setCurrentValue(newValue);
   };
   const handleBlur = (
-    e: FocusEvent<HTMLInputElement>,
-    newValue: Date | number | string
+    e: React.FocusEvent<HTMLInputElement>,
+    newValue: Date | number | string | boolean
   ) => {
     e.stopPropagation();
     e.preventDefault();
     if (timer.current) clearTimeout(timer.current);
+    toDoUpdate.current = true;
     setCurrentValue(newValue);
     doUpdate();
   };
@@ -68,7 +82,8 @@ export default function EditableCell(
           currentValue === rowData[cellField] ? "inherit" : "greenyellow",
       }}
     >
-      {currentValue instanceof Date ||
+      {forceType === "DATE" ||
+      currentValue instanceof Date ||
       (typeof currentValue === "string" &&
         /^\d{4}-\d{2}-\d{2}/.test(currentValue)) ? (
         <input
@@ -77,25 +92,35 @@ export default function EditableCell(
           value={
             typeof currentValue === "string"
               ? currentValue.slice(0, 10)
-              : currentValue.toISOString().slice(0, 10)
+              : currentValue instanceof Date
+              ? currentValue.toISOString().slice(0, 10)
+              : ""
           }
           onChange={(e) => handleChange(e, e.currentTarget.value)}
           onBlur={(e) => handleBlur(e, e.currentTarget.value)}
         />
-      ) : typeof currentValue === "number" ? (
+      ) : forceType === "NUMBER" || typeof currentValue === "number" ? (
         <input
           style={{ width: "calc(100% - 4px)" }}
           type="number"
-          value={currentValue as number}
+          value={
+            typeof currentValue === "number" ? (currentValue as number) : ""
+          }
           onChange={(e) => handleChange(e, parseFloat(e.currentTarget.value))}
           onBlur={(e) => handleBlur(e, parseFloat(e.currentTarget.value))}
+        />
+      ) : forceType === "BOOLEAN" || typeof currentValue === "boolean" ? (
+        <input
+          type="checkbox"
+          checked={currentValue === true}
+          onChange={(e) => handleChange(e, e.currentTarget.checked, 2)}
         />
       ) : (
         <input
           style={{ width: "calc(100% - 4px)" }}
           value={`${currentValue ?? ""}`}
           onChange={(e) => handleChange(e, e.currentTarget.value)}
-          onBlur={(e) => handleBlur(e, e.target.value)}
+          onBlur={(e) => handleBlur(e, e.currentTarget.value)}
         />
       )}
     </div>

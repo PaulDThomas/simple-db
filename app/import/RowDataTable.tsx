@@ -8,7 +8,7 @@ import {
 } from "@asup/simple-table";
 import Link from "next/link";
 import { useContext } from "react";
-import EditableCell from "./EditableCell";
+import EditableCell from "../api/components/EditableCell";
 import { LoadRowsButton } from "./LoadRowsButton";
 import { SaveRowsButton } from "./SaveRowsButton";
 import { AppContext } from "../_context/AppContextProvider";
@@ -57,7 +57,7 @@ export default function RowDataTable() {
             sortFn: simpleTableSortFn,
             canColumnFilter: true,
             renderFn: (a: iSimpleTableCellRenderProps) =>
-              EditableCell(a, UPDATE_CELL),
+              EditableCell({ ...a, operation: UPDATE_CELL }),
           })),
         ]}
         data={state.rows.map(

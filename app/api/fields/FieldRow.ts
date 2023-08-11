@@ -4,6 +4,8 @@ export interface field_simple_table_row extends iSimpleTableRow {
   worksheetFieldName: string;
   fieldLabel: string;
   fieldName: string;
+  inBreadCrumb: boolean;
+  inChild: boolean;
 }
 
 export interface FieldRow {

@@ -7,7 +7,7 @@ import {
 } from "@asup/simple-table";
 import { useCallback, useContext, useEffect } from "react";
 import { AddFieldButton } from "./AddFieldButton";
-import EditableCell from "./EditableCell";
+import EditableCell from "../api/components/EditableCell";
 import { ImportDataButton } from "./ImportDataButton";
 import { LoadFieldsButton } from "./LoadFieldsButton";
 import { SaveFieldsButton } from "./SaveFieldsButton";
@@ -18,7 +18,6 @@ import { DeleteFieldButton } from "./DeleteFieldButton";
 
 export default function FieldTable() {
   const { state, dispatch } = useContext(AppContext);
-  // const [tableData, setTableData] = useState<fieldRow[] | null>(null);
 
   const newData = useCallback(async () => {
     const newData = await retrieveFields();
@@ -52,41 +51,70 @@ export default function FieldTable() {
               id: field.id,
               groupName: field.groupname,
               order: field.grouporder,
-              ...(field.simple_table_row as iSimpleTableRow),
+              fieldName: field.simple_table_row.fieldName,
+              fieldLabel: field.simple_table_row.fieldLabel,
+              inBreadcrumb: field.simple_table_row.inBreadcrumb,
+              inChild: field.simple_table_row.inChild,
             }))}
           fields={[
+            {
+              name: "id",
+              label: "Delete?",
+              width: "20px",
+              renderFn: DeleteFieldButton,
+            },
             {
               name: "groupName",
               label: "Group name",
               sortFn: simpleTableSortFn,
               canColumnFilter: true,
-              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+              renderFn: (a) =>
+                EditableCell({ ...a, operation: UPDATE_FIELD_CELL }),
             },
             {
               name: "order",
               label: "Order",
               sortFn: simpleTableSortFn,
-              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+              renderFn: (a) =>
+                EditableCell({ ...a, operation: UPDATE_FIELD_CELL }),
             },
             {
               name: "fieldName",
               label: "Name",
               sortFn: simpleTableSortFn,
               canColumnFilter: true,
-              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+              renderFn: (a) =>
+                EditableCell({ ...a, operation: UPDATE_FIELD_CELL }),
             },
             {
               name: "fieldLabel",
               label: "Label",
               sortFn: simpleTableSortFn,
               canColumnFilter: true,
-              renderFn: (a) => EditableCell(a, UPDATE_FIELD_CELL),
+              renderFn: (a) =>
+                EditableCell({ ...a, operation: UPDATE_FIELD_CELL }),
             },
             {
-              name: "id",
-              label: "Delete?",
-              width: "20px",
-              renderFn: DeleteFieldButton,
+              name: "inBreadcrumb",
+              label: "Breadcrumb",
+              canColumnFilter: true,
+              renderFn: (a) =>
+                EditableCell({
+                  ...a,
+                  operation: UPDATE_FIELD_CELL,
+                  forceType: "BOOLEAN",
+                }),
+            },
+            {
+              name: "inChild",
+              label: "Child",
+              canColumnFilter: true,
+              renderFn: (a) =>
+                EditableCell({
+                  ...a,
+                  operation: UPDATE_FIELD_CELL,
+                  forceType: "BOOLEAN",
+                }),
             },
           ]}
         />
