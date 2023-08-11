@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { ShowBreadcrumb } from "./ShowBreadcrumb";
+import { Fragment } from "react";
 
 interface ParentBreadcrumbsProps {
   items: RowDataRow[];
@@ -8,7 +9,7 @@ interface ParentBreadcrumbsProps {
 
 export const ParentBreadcrumbs = ({ items }: ParentBreadcrumbsProps) => {
   return items.length === 0 ? (
-    <>Root!</>
+    <Link href={"/"}>Back to search</Link>
   ) : (
     <div>
       <h5>Parent bookmarks:</h5>
@@ -18,8 +19,11 @@ export const ParentBreadcrumbs = ({ items }: ParentBreadcrumbsProps) => {
           .sort(
             (a, b) => (a.level_change as number) - (b.level_change as number)
           )
-          .map((item) => (
-            <ShowBreadcrumb key={item.id} id={item.id} item={item} />
+          .map((item, i) => (
+            <Fragment key={item.id}>
+              {i > 0 && <span style={{ color: "blue" }}>=&gt;</span>}
+              <ShowBreadcrumb id={item.id} item={item} />
+            </Fragment>
           ))}
       </div>
     </div>

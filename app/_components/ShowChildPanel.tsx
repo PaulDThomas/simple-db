@@ -18,11 +18,13 @@ export const ShowChildPanel = ({
   const { state } = useContext(AppContext);
   const thisItem = item ?? state.rows?.find((row) => row.id === id);
   const bcFields =
-    state.fields?.filter(
-      (field) =>
-        field.groupname === thisItem?.groupname &&
-        field.simple_table_row.inChild
-    ) ?? [];
+    state.fields
+      ?.filter(
+        (field) =>
+          field.groupname === thisItem?.groupname &&
+          field.simple_table_row.inChild
+      )
+      .sort((a, b) => a.grouporder - b.grouporder) ?? [];
 
   return !thisItem ? (
     <div>Id ${id} not found</div>

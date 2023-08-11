@@ -16,7 +16,7 @@ export default function DataNav() {
 
   const fetchIds = useCallback(async (id: string | null) => {
     const url = `/api/rowdata${
-      id ? `?family_id=${id}&child_level=9&parent_level=9` : ""
+      id ? `?family_id=${id}&child_level=1&parent_level=9` : ""
     }`;
     const response = await fetch(url);
     if (response.status === 200) {
@@ -36,13 +36,12 @@ export default function DataNav() {
           items={itemList.filter((item) => (item.level_change ?? 0) < 0)}
         />
         <ThisItem
-          items={itemList.filter((item) => (item.level_change ?? 0) === 0)}
+          item={itemList.find((item) => (item.level_change ?? 0) === 0)}
         />
         <ChildrenTable
           items={itemList.filter((item) => (item.level_change ?? 0) > 0)}
         />
         <hr style={{ marginTop: "2rem" }} />
-        <pre>{JSON.stringify(itemList, null, 2)}</pre>
       </div>
     </LoadFields>
   );
