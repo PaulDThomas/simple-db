@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
-import { ShowBreadcrumb } from "../ShowBreadcrumb";
+import { ShowBreadcrumb } from "./ShowBreadcrumb";
 
 interface ParentBreadcrumbsProps {
   items: RowDataRow[];

@@ -1,9 +1,9 @@
 "use client";
 
 import { useContext } from "react";
-import { AppContext } from "./_context/AppContextProvider";
+import { AppContext } from "../_context/AppContextProvider";
 import Link from "next/link";
-import { RowDataRow } from "./api/rowdata/RowDataRow";
+import { RowDataRow } from "../api/rowdata/RowDataRow";
 
 interface ShowBreadcrumbProps {
   id: string;

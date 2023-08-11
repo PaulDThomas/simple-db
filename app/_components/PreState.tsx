@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { AppContext } from "./_context/AppContextProvider";
+import { AppContext } from "../_context/AppContextProvider";
 
 export const PreState = () => {
   const { state } = useContext(AppContext);

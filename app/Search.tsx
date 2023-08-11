@@ -4,7 +4,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { AppContext } from "./_context/AppContextProvider";
 import { RowDataRow } from "./api/rowdata/RowDataRow";
 import _ from "lodash";
-import { ShowBreadcrumb } from "./ShowBreadcrumb";
+import { ShowBreadcrumb } from "./_components/ShowBreadcrumb";
 
 export const Search = () => {
   const appContext = useContext(AppContext);

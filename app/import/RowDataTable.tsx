@@ -8,7 +8,7 @@ import {
 } from "@asup/simple-table";
 import Link from "next/link";
 import { useContext } from "react";
-import EditableCell from "../api/components/EditableCell";
+import EditableCell from "../_components/EditableCell";
 import { LoadRowsButton } from "./LoadRowsButton";
 import { SaveRowsButton } from "./SaveRowsButton";
 import { AppContext } from "../_context/AppContextProvider";

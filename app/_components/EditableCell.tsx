@@ -1,5 +1,6 @@
 "use client";
 
+import _ from "lodash";
 import {
   ChangeEvent,
   useCallback,
@@ -8,9 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { AppContext } from "../../_context/AppContextProvider";
+import { AppContext } from "../_context/AppContextProvider";
 import { iCellRenderProps } from "./iCellRenderProps";
-import _ from "lodash";
 
 export default function EditableCell({
   cellField,
@@ -27,12 +27,13 @@ export default function EditableCell({
   const timer = useRef<NodeJS.Timeout | null>(null);
   const timerVal = useRef<number>(1000);
   const doUpdate = useCallback(() => {
-    dispatch({
-      operation,
-      rowId: rowData.id as string,
-      fieldName: cellField,
-      newValue: currentValue,
-    });
+    if (operation !== "NONE")
+      dispatch({
+        operation,
+        rowId: rowData.id as string,
+        fieldName: cellField,
+        newValue: currentValue,
+      });
   }, [cellField, currentValue, dispatch, operation, rowData.id]);
   useEffect(() => {
     if (!_.isEqual(rowData[cellField], currentValue)) {
@@ -89,6 +90,7 @@ export default function EditableCell({
         <input
           style={{ width: "calc(100% - 4px)" }}
           type="date"
+          disabled={operation === "NONE"}
           value={
             typeof currentValue === "string"
               ? currentValue.slice(0, 10)
@@ -103,6 +105,7 @@ export default function EditableCell({
         <input
           style={{ width: "calc(100% - 4px)" }}
           type="number"
+          disabled={operation === "NONE"}
           value={
             typeof currentValue === "number" ? (currentValue as number) : ""
           }
@@ -112,12 +115,14 @@ export default function EditableCell({
       ) : forceType === "BOOLEAN" || typeof currentValue === "boolean" ? (
         <input
           type="checkbox"
+          disabled={operation === "NONE"}
           checked={currentValue === true}
           onChange={(e) => handleChange(e, e.currentTarget.checked, 2)}
         />
       ) : (
         <input
           style={{ width: "calc(100% - 4px)" }}
+          disabled={operation === "NONE"}
           value={`${currentValue ?? ""}`}
           onChange={(e) => handleChange(e, e.currentTarget.value)}
           onBlur={(e) => handleBlur(e, e.currentTarget.value)}

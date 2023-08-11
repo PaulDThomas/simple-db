@@ -7,7 +7,7 @@ import {
 } from "@asup/simple-table";
 import { useCallback, useContext, useEffect } from "react";
 import { AddFieldButton } from "./AddFieldButton";
-import EditableCell from "../api/components/EditableCell";
+import EditableCell from "../_components/EditableCell";
 import { ImportDataButton } from "./ImportDataButton";
 import { LoadFieldsButton } from "./LoadFieldsButton";
 import { SaveFieldsButton } from "./SaveFieldsButton";

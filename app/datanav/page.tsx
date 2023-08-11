@@ -3,8 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
-import { ChildrenTable } from "./ChildrenTable";
-import { ParentBreadcrumbs } from "./ParentBreadcrumbs";
+import { ChildrenTable } from "../_components/ChildrenTable";
+import { ParentBreadcrumbs } from "../_components/ParentBreadcrumbs";
 import { ThisItem } from "./ThisItem";
 import { LoadFields } from "../LoadFields";
 
