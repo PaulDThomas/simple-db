@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
+import { ShowBreadcrumb } from "../ShowBreadcrumb";
 
 interface ParentBreadcrumbsProps {
   items: RowDataRow[];
@@ -18,13 +19,7 @@ export const ParentBreadcrumbs = ({ items }: ParentBreadcrumbsProps) => {
             (a, b) => (a.level_change as number) - (b.level_change as number)
           )
           .map((item) => (
-            <Link href={`?id=${item.id}`} key={item.id}>
-              <span>
-                {item.level_change} ={" "}
-                {Object.keys(item.simple_table_row).join("|")}
-                <span style={{ color: "blue" }}>&nbsp;//&nbsp;</span>
-              </span>
-            </Link>
+            <ShowBreadcrumb key={item.id} id={item.id} item={item} />
           ))}
       </div>
     </div>

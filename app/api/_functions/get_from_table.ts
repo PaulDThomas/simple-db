@@ -24,6 +24,11 @@ export async function get_from_table(
     return run_query(`SELECT * FROM ${table} WHERE groupname = $1`, [
       sp["groupname"],
     ]);
+  } else if (sp["search"]) {
+    return run_query(
+      `SELECT * FROM ${table} WHERE jsonb_path_exists(simple_table_row, CONCAT('$.** ? (@.type() == "string" && @like_regex "',$1::text,'" flag "i")')::jsonpath)`,
+      [sp["search"]]
+    );
   } else {
     return run_query(`SELECT * FROM ${table}`, []);
   }

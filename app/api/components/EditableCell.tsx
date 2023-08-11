@@ -33,7 +33,7 @@ export default function EditableCell({
       fieldName: cellField,
       newValue: currentValue,
     });
-  }, [cellField, currentValue, dispatch, rowData.id]);
+  }, [cellField, currentValue, dispatch, operation, rowData.id]);
   useEffect(() => {
     if (!_.isEqual(rowData[cellField], currentValue)) {
       // Update from interaction

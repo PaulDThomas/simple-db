@@ -19,7 +19,7 @@ export const run_query = async (
       return NextResponse.json(
         {
           message: "RUN_QUERY: Error in query",
-          error,
+          error: (error as { message: string }).message,
         },
         { status: 500 }
       );

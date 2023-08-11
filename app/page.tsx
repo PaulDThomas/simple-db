@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { LoadFields } from "./LoadFields";
+import { Search } from "./Search";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -8,6 +10,9 @@ export default function Home() {
       <div style={{ position: "relative" }}>
         <Link href="/import">Import spreadsheet</Link>
       </div>
+      <LoadFields>
+        <Search />
+      </LoadFields>
     </main>
   );
 }

@@ -6,6 +6,7 @@ import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { ChildrenTable } from "./ChildrenTable";
 import { ParentBreadcrumbs } from "./ParentBreadcrumbs";
 import { ThisItem } from "./ThisItem";
+import { LoadFields } from "../LoadFields";
 
 export default function DataNav() {
   const [itemList, setItemList] = useState<RowDataRow[]>([]);
@@ -29,18 +30,20 @@ export default function DataNav() {
   }, [currentId, fetchIds]);
 
   return (
-    <div>
-      <ParentBreadcrumbs
-        items={itemList.filter((item) => (item.level_change ?? 0) < 0)}
-      />
-      <ThisItem
-        items={itemList.filter((item) => (item.level_change ?? 0) === 0)}
-      />
-      <ChildrenTable
-        items={itemList.filter((item) => (item.level_change ?? 0) > 0)}
-      />
-      <hr style={{ marginTop: "2rem" }} />
-      <pre>{JSON.stringify(itemList, null, 2)}</pre>
-    </div>
+    <LoadFields>
+      <div>
+        <ParentBreadcrumbs
+          items={itemList.filter((item) => (item.level_change ?? 0) < 0)}
+        />
+        <ThisItem
+          items={itemList.filter((item) => (item.level_change ?? 0) === 0)}
+        />
+        <ChildrenTable
+          items={itemList.filter((item) => (item.level_change ?? 0) > 0)}
+        />
+        <hr style={{ marginTop: "2rem" }} />
+        <pre>{JSON.stringify(itemList, null, 2)}</pre>
+      </div>
+    </LoadFields>
   );
 }
