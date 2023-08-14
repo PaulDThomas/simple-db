@@ -1,8 +1,9 @@
 "use client";
 
+import { iSimpleTableCellRenderProps } from "@asup/simple-table";
 import _ from "lodash";
 import {
-  ChangeEvent,
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -10,7 +11,29 @@ import {
   useState,
 } from "react";
 import { AppContext } from "../_context/AppContextProvider";
-import { iCellRenderProps } from "./iCellRenderProps";
+import { patchRowValue } from "../_functions/patchRowValue";
+import { Control4Bool } from "./Control4Bool";
+import { Control4Date } from "./Control4Date";
+import { Control4Number } from "./Control4Number";
+import { Control4String } from "./Control4String";
+
+interface EditableCellContextProps {
+  toDoUpdate: React.MutableRefObject<boolean>;
+  timer: React.MutableRefObject<NodeJS.Timeout | null>;
+  timerVal: React.MutableRefObject<number>;
+  currentValue: unknown;
+  setCurrentValue: (ret: unknown) => void;
+  doUpdate: () => Promise<void>;
+  operation: "NONE" | "UPDATE_CELL" | "UPDATE_FIELD_CELL" | "PATCH_CELL";
+}
+
+export const EditableCellContext =
+  createContext<EditableCellContextProps | null>(null);
+
+interface iCellRenderProps extends iSimpleTableCellRenderProps {
+  operation: "NONE" | "UPDATE_CELL" | "UPDATE_FIELD_CELL" | "PATCH_CELL";
+  forceType?: "DATE" | "NUMBER" | "BOOLEAN";
+}
 
 export default function EditableCell({
   cellField,
@@ -26,8 +49,10 @@ export default function EditableCell({
   const toDoUpdate = useRef<boolean>(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
   const timerVal = useRef<number>(1000);
-  const doUpdate = useCallback(() => {
-    if (operation !== "NONE")
+  const doUpdate = useCallback(async () => {
+    if (operation === "PATCH_CELL") {
+      await patchRowValue(rowData.id as string, cellField, currentValue);
+    } else if (operation !== "NONE")
       dispatch({
         operation,
         rowId: rowData.id as string,
@@ -35,6 +60,7 @@ export default function EditableCell({
         newValue: currentValue,
       });
   }, [cellField, currentValue, dispatch, operation, rowData.id]);
+  // Update from either row or control
   useEffect(() => {
     if (!_.isEqual(rowData[cellField], currentValue)) {
       // Update from interaction
@@ -52,82 +78,38 @@ export default function EditableCell({
     };
   }, [cellField, currentValue, doUpdate, rowData]);
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    newValue: Date | number | string | boolean,
-    thisTimer = 1000
-  ) => {
-    e.stopPropagation();
-    e.preventDefault();
-    toDoUpdate.current = true;
-    timerVal.current = thisTimer;
-    setCurrentValue(newValue);
-  };
-  const handleBlur = (
-    e: React.FocusEvent<HTMLInputElement>,
-    newValue: Date | number | string | boolean
-  ) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (timer.current) clearTimeout(timer.current);
-    toDoUpdate.current = true;
-    setCurrentValue(newValue);
-    doUpdate();
-  };
-
   return (
-    <div
-      style={{
-        paddingRight: "4px",
-        backgroundColor:
-          currentValue === rowData[cellField] ? "inherit" : "greenyellow",
+    <EditableCellContext.Provider
+      value={{
+        toDoUpdate,
+        timer,
+        timerVal,
+        doUpdate,
+        currentValue,
+        setCurrentValue,
+        operation,
       }}
     >
-      {forceType === "DATE" ||
-      currentValue instanceof Date ||
-      (typeof currentValue === "string" &&
-        /^\d{4}-\d{2}-\d{2}/.test(currentValue)) ? (
-        <input
-          style={{ width: "calc(100% - 4px)" }}
-          type="date"
-          disabled={operation === "NONE"}
-          value={
-            typeof currentValue === "string"
-              ? currentValue.slice(0, 10)
-              : currentValue instanceof Date
-              ? currentValue.toISOString().slice(0, 10)
-              : ""
-          }
-          onChange={(e) => handleChange(e, e.currentTarget.value)}
-          onBlur={(e) => handleBlur(e, e.currentTarget.value)}
-        />
-      ) : forceType === "NUMBER" || typeof currentValue === "number" ? (
-        <input
-          style={{ width: "calc(100% - 4px)" }}
-          type="number"
-          disabled={operation === "NONE"}
-          value={
-            typeof currentValue === "number" ? (currentValue as number) : ""
-          }
-          onChange={(e) => handleChange(e, parseFloat(e.currentTarget.value))}
-          onBlur={(e) => handleBlur(e, parseFloat(e.currentTarget.value))}
-        />
-      ) : forceType === "BOOLEAN" || typeof currentValue === "boolean" ? (
-        <input
-          type="checkbox"
-          disabled={operation === "NONE"}
-          checked={currentValue === true}
-          onChange={(e) => handleChange(e, e.currentTarget.checked, 2)}
-        />
-      ) : (
-        <input
-          style={{ width: "calc(100% - 4px)" }}
-          disabled={operation === "NONE"}
-          value={`${currentValue ?? ""}`}
-          onChange={(e) => handleChange(e, e.currentTarget.value)}
-          onBlur={(e) => handleBlur(e, e.currentTarget.value)}
-        />
-      )}
-    </div>
+      <div
+        style={{
+          paddingRight: "4px",
+          backgroundColor:
+            currentValue === rowData[cellField] ? "inherit" : "greenyellow",
+        }}
+      >
+        {forceType === "DATE" ||
+        currentValue instanceof Date ||
+        (typeof currentValue === "string" &&
+          /^\d{4}-\d{2}-\d{2}/.test(currentValue)) ? (
+          <Control4Date />
+        ) : forceType === "NUMBER" || typeof currentValue === "number" ? (
+          <Control4Number />
+        ) : forceType === "BOOLEAN" || typeof currentValue === "boolean" ? (
+          <Control4Bool />
+        ) : (
+          <Control4String />
+        )}
+      </div>
+    </EditableCellContext.Provider>
   );
 }

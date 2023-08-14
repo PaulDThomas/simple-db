@@ -2,7 +2,6 @@ import { useContext } from "react";
 import EditableCell from "../_components/EditableCell";
 import { AppContext } from "../_context/AppContextProvider";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
-import { UPDATE_CELL } from "../_context/appContextReducer";
 
 interface ThisItemProps {
   item?: RowDataRow;
@@ -47,8 +46,8 @@ export const ThisItem = ({ item }: ThisItemProps) => {
                 <EditableCell
                   columnNumber={1}
                   cellField={field.simple_table_row.fieldName}
-                  rowData={item.simple_table_row}
-                  operation={UPDATE_CELL}
+                  rowData={{ ...item.simple_table_row, id: item.id }}
+                  operation="PATCH_CELL"
                 />
               </span>
             </div>

@@ -7,15 +7,21 @@ export async function patch_by_id(
   request: NextRequest
 ): Promise<NextResponse> {
   const inputJson = await request.json();
-  if (inputJson.id && inputJson.setting && inputJson.newValue !== undefined) {
+  if (inputJson.id && inputJson.field && inputJson.newValue !== undefined) {
     return run_query(
-      `UPDATE ${table} SET ${json_var} = jsonb_set(settings, '{$2}', $3) WHERE id = $1`,
-      [inputJson.id, inputJson.setting, JSON.stringify(inputJson.newValue)]
+      `UPDATE ${table} 
+      SET ${json_var} = 
+        jsonb_set(${json_var}, 
+          CONCAT('{',$2::text,'}')::text[], 
+          $3::jsonb
+        )
+      WHERE id = $1::uuid`,
+      [inputJson.id, inputJson.field, JSON.stringify(inputJson.newValue)]
     );
   } else {
     return NextResponse.json(
       {
-        message: `API/${table}/PATCH: id, setting and newValue are required`,
+        message: `API/${table}/PATCH: id, json_var and newValue are required`,
       },
       { status: 400 }
     );
