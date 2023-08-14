@@ -20,6 +20,8 @@ export const addBlankField = (
       worksheetFieldName: "",
       fieldLabel: `New field ${newVarNo}`,
       fieldName: `newField${newVarNo}`,
+      inBreadcrumb: false,
+      inChild: false,
     },
   };
   return [newField, ...fields];
