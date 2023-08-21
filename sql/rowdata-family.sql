@@ -1,15 +1,16 @@
-DROP FUNCTION IF EXISTS rowdata_family
+-- FUNCTION: public.rowdata_family(uuid, integer, integer)
+DROP FUNCTION IF EXISTS public.rowdata_family (UUID, INTEGER, INTEGER)
 ;
 
 CREATE
-OR REPLACE FUNCTION rowdata_family (initial_id UUID, child_depth INT DEFAULT 1, parent_depth INT DEFAULT 0) RETURNS TABLE (
+OR REPLACE FUNCTION public.rowdata_family (initial_id UUID, child_depth INTEGER DEFAULT 1, parent_depth INTEGER DEFAULT 0) RETURNS TABLE (
   id UUID,
   parent UUID,
-  groupname VARCHAR(64),
-  simple_table_row JSONB,
-  level_change INT
-  -- link ARRAY[UUID]
-) LANGUAGE SQL AS $$
+  groupname CHARACTER VARYING,
+  simple_table_row jsonb,
+  level_change INTEGER
+) LANGUAGE 'sql' COST 100 VOLATILE PARALLEL UNSAFE ROWS 1000 AS $BODY$
+
 WITH RECURSIVE
   source (id, parent_id, cur,parent, groupname, simple_table_row, level_change, link) AS (
     SELECT
@@ -58,12 +59,9 @@ SELECT
   id, parent_id, groupname, simple_table_row, level_change
 FROM
   source;
-  $$
+  
+$BODY$
 ;
 
-SELECT
-  *
-FROM
-  -- return_row_data ('d061e161-2f47-411f-99b5-f518e2cb8329',0,0) -- G1
-  rowdata_family ('7caafe7e-5e52-4170-9147-679ac40956c7') -- G5
-  -- return_row_data ('77f16113-b8b1-4cca-a957-c1ad6286bdc5') -- G9
+ALTER FUNCTION public.rowdata_family (UUID, INTEGER, INTEGER) OWNER TO postgres
+;
