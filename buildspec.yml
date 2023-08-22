@@ -17,4 +17,4 @@ phases:
       #- zip -r app-deployment-package.zip .next node_modules package.json package-lock.json server.js  # Add more files as needed
 
 artifacts:
-  files: "**\*"
+  files: "**/*"
