@@ -9,7 +9,7 @@ export const retrieveFields = async (fieldGroup?: string) => {
     }`;
     const request = await fetch(url);
     const response = await request.json();
-    return response.rows as FieldRow[];
+    return (response.rows ?? []) as FieldRow[];
   } catch (error) {
     console.warn(error);
     return [];
