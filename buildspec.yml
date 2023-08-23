@@ -9,12 +9,10 @@ phases:
 
   build:
     commands:
-      - npm run build
 
   post_build:
     commands:
-      - mv .next/static .next/standalone/.next
 
 artifacts:
-  files: "**/*"
-  base-directory: .next/standalone
+  files:
+    - "**/*"

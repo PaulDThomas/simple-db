@@ -28,24 +28,6 @@ export default function AdminPage(): JSX.Element {
     <main className={styles.main}>
       <h1>Simple DB admin page</h1>
       <div>
-        <table>
-          <tbody>
-            <tr>
-              <td>DB host</td>
-              <td>{process.env.PGSQL_HOST ?? "Not set"}</td>
-            </tr>
-            <tr>
-              <td>DB`</td>
-              <td>{process.env.PGSQL_DATABASE ?? "Not set"}</td>
-            </tr>
-            <tr>
-              <td>DB uid</td>
-              <td>{process.env.PGSQL_USER ?? "Not set"}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
         <button
           onClick={(e) => {
             e.preventDefault();
