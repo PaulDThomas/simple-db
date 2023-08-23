@@ -9,10 +9,12 @@ phases:
 
   build:
     commands:
+      - npm run build
 
   post_build:
     commands:
 
 artifacts:
   files:
-    - "**/*"
+    - "project.json"
+    - ".next"
