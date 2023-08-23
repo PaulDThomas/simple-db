@@ -13,8 +13,8 @@ phases:
 
   post_build:
     commands:
-      - mv .next/static/**/* .next/standalone
-      - mv .next/static/* .next/standalone
+      - mv .next/static/**/* .next/standalone/.next/static
+      - mv .next/static/* .next/standalone/.next/static
 
 artifacts:
   files: "**/*"
