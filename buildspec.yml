@@ -18,4 +18,4 @@ phases:
 
 artifacts:
   files: "**/*"
-  base-directory: ./next/standalone
+  base-directory: .next/standalone
