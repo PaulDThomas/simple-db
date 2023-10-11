@@ -38,7 +38,6 @@ export default function RowDataTable() {
         id="rowdata-table"
         keyField="id"
         mainBackgroundColor="inherit"
-        headerBackgroundColor="inherit"
         fields={[
           {
             name: "id",
