@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useContext } from "react";
 import { AppContext } from "../_context/AppContextProvider";
-import Link from "next/link";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
 import EditableCell from "./EditableCell";
 
@@ -27,54 +27,32 @@ export const ShowChildPanel = ({
       .sort((a, b) => a.grouporder - b.grouporder) ?? [];
 
   return !thisItem ? (
-    <div>Id ${id} not found</div>
+    <></>
   ) : (
-    <div
-      style={{
-        height: "300px",
-        width: "300px",
-        border: "1px solid black",
-        borderRadius: "4px",
-      }}
-    >
-      <Link
-        href={`/datanav?id=${id}`}
-        style={{ margin: "1rem", borderBottom: "1px solid black" }}
-      >
-        <h4 style={{ margin: "0.5rem" }}>{thisItem.groupname}</h4>
-        {bcFields.map((field, i) => {
-          return (
-            <>
-              <div
-                key={i}
-                style={{
-                  paddingLeft: "2px",
-                  paddingRight: "2px",
-                }}
-              >
-                <span
-                  style={{
-                    width: "33%",
-                    maxWidth: "33%",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {field.simple_table_row.fieldLabel}
-                </span>
-                <span style={{ width: "67%" }}>
-                  <EditableCell
-                    columnNumber={1}
-                    cellField={field.simple_table_row.fieldName}
-                    rowData={thisItem.simple_table_row}
-                    operation="NONE"
-                  />
-                </span>
-              </div>
-            </>
-          );
-        })}
+    <div className="w-full h-full rounded-lg border border-black p-2">
+      <Link href={`/datanav?id=${id}`} className="hover:underline">
+        <div className="text-lg text-amber-600">{thisItem.groupname}</div>
       </Link>
+      {bcFields.map((field, i) => {
+        return (
+          <div key={i} className="px-1">
+            <span>{field.simple_table_row.fieldLabel}</span>
+            <span>
+              <EditableCell
+                columnNumber={1}
+                rowNumber={i}
+                field={{
+                  ...field.simple_table_row,
+                  name: field.simple_table_row.fieldName,
+                }}
+                cellField={field.simple_table_row.fieldName}
+                rowData={thisItem.simple_table_row}
+                operation="NONE"
+              />
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 };

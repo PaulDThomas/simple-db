@@ -2,6 +2,7 @@ import { useContext } from "react";
 import EditableCell from "../_components/EditableCell";
 import { AppContext } from "../_context/AppContextProvider";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
+import { Spinner } from "flowbite-react";
 
 interface ThisItemProps {
   item?: RowDataRow;
@@ -15,45 +16,42 @@ export const ThisItem = ({ item }: ThisItemProps) => {
       .sort((a, b) => a.grouporder - b.grouporder) ?? [];
 
   return !item ? (
-    <div>Item not found</div>
+    <div>
+      Loading... <Spinner />
+    </div>
   ) : (
-    <div style={{ margin: "2rem" }}>
-      <h3>ID: {item.id}</h3>
-      <div style={{ display: "table", width: "100%", marginTop: "1rem" }}>
+    <>
+      <div className="text-xl m-4 text-amber-600">{item.groupname}</div>
+      <div className="grid grid-cols-1">
         {bcFields.map((field, i) => {
           return (
             <div
               key={i}
-              style={{
-                paddingLeft: "2px",
-                paddingRight: "2px",
-                display: "table-row",
-              }}
+              className="border border-amber-400 w-30 mb-2 rounded grid grid-cols-3 gap-3"
             >
-              <span
-                style={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "table-cell",
-                  width: "30%",
-                  textAlign: "end",
-                  paddingRight: "1rem",
-                }}
-              >
+              <div className="text-end my-1 ml-2">
                 {field.simple_table_row.fieldLabel}
-              </span>
-              <span style={{ display: "table-cell" }}>
+              </div>
+              <div className="col-span-2 pr-2 my-1 w-full">
                 <EditableCell
                   columnNumber={1}
+                  rowNumber={i}
+                  field={{
+                    ...field.simple_table_row,
+                    name: field.simple_table_row.fieldName,
+                  }}
                   cellField={field.simple_table_row.fieldName}
                   rowData={{ ...item.simple_table_row, id: item.id }}
                   operation="PATCH_CELL"
                 />
-              </span>
+              </div>
             </div>
           );
         })}
       </div>
-    </div>
+      <div className="w-full flex justify-end">
+        <span className="text-sm text-gray-600">ID: {item.id}</span>
+      </div>
+    </>
   );
 };

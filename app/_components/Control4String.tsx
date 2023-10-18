@@ -2,15 +2,16 @@ import { useContext } from "react";
 import { EditableCellContext } from "./EditableCell";
 import { handleChange } from "./handleChange";
 import { handleBlur } from "./handleBlur";
+import { TextInput } from "flowbite-react";
 
 export const Control4String = () => {
   const ctx = useContext(EditableCellContext);
 
   return ctx ? (
-    <input
-      style={{ width: "calc(100% - 4px)" }}
+    <TextInput
       disabled={ctx.operation === "NONE"}
       value={`${ctx.currentValue ?? ""}`}
+      sizing="sm"
       onChange={(e) =>
         handleChange(
           e,

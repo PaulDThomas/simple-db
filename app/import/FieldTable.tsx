@@ -1,20 +1,17 @@
 "use client";
 
-import {
-  SimpleTable,
-  iSimpleTableRow,
-  simpleTableSortFn,
-} from "@asup/simple-table";
+import { SimpleTable, simpleTableSortFn } from "@asup/simple-table";
+import { Button } from "flowbite-react";
 import { useCallback, useContext, useEffect } from "react";
-import { AddFieldButton } from "./AddFieldButton";
 import EditableCell from "../_components/EditableCell";
-import { ImportDataButton } from "./ImportDataButton";
-import { LoadFieldsButton } from "./LoadFieldsButton";
-import { SaveFieldsButton } from "./SaveFieldsButton";
 import { AppContext } from "../_context/AppContextProvider";
 import { SET_FIELDS, UPDATE_FIELD_CELL } from "../_context/appContextReducer";
 import { retrieveFields } from "../_functions/retreiveFields";
+import { AddFieldButton } from "./AddFieldButton";
 import { DeleteFieldButton } from "./DeleteFieldButton";
+import { ImportDataButton } from "./ImportDataButton";
+import { LoadFieldsButton } from "./LoadFieldsButton";
+import { SaveFieldsButton } from "./SaveFieldsButton";
 
 export default function FieldTable() {
   const { state, dispatch } = useContext(AppContext);
@@ -36,10 +33,12 @@ export default function FieldTable() {
         minHeight: "200px",
       }}
     >
-      <LoadFieldsButton />
-      <AddFieldButton />
-      <SaveFieldsButton />
-      <ImportDataButton />
+      <Button.Group>
+        <LoadFieldsButton />
+        <AddFieldButton />
+        <SaveFieldsButton />
+        <ImportDataButton />
+      </Button.Group>
       <div style={{ minHeight: "150px" }}>
         <SimpleTable
           headerLabel="Variable list"
@@ -122,8 +121,10 @@ export default function FieldTable() {
     </div>
   ) : (
     <>
-      <div>Waiting for sheet selection</div>
-      <LoadFieldsButton />
+      <div className="flex gap-2">
+        No sheet loaded
+        <LoadFieldsButton />
+      </div>
     </>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { iSimpleTableCellRenderProps } from "@asup/simple-table";
-import _ from "lodash";
+import { isEqual } from "lodash";
 import {
   createContext,
   useCallback,
@@ -62,7 +62,7 @@ export default function EditableCell({
   }, [cellField, currentValue, dispatch, operation, rowData.id]);
   // Update from either row or control
   useEffect(() => {
-    if (!_.isEqual(rowData[cellField], currentValue)) {
+    if (!isEqual(rowData[cellField], currentValue)) {
       // Update from interaction
       if (toDoUpdate.current) {
         timer.current = setTimeout(doUpdate, timerVal.current);
@@ -90,26 +90,18 @@ export default function EditableCell({
         operation,
       }}
     >
-      <div
-        style={{
-          paddingRight: "4px",
-          backgroundColor:
-            currentValue === rowData[cellField] ? "inherit" : "greenyellow",
-        }}
-      >
-        {forceType === "DATE" ||
-        currentValue instanceof Date ||
-        (typeof currentValue === "string" &&
-          /^\d{4}-\d{2}-\d{2}/.test(currentValue)) ? (
-          <Control4Date />
-        ) : forceType === "NUMBER" || typeof currentValue === "number" ? (
-          <Control4Number />
-        ) : forceType === "BOOLEAN" || typeof currentValue === "boolean" ? (
-          <Control4Bool />
-        ) : (
-          <Control4String />
-        )}
-      </div>
+      {forceType === "DATE" ||
+      currentValue instanceof Date ||
+      (typeof currentValue === "string" &&
+        /^\d{4}-\d{2}-\d{2}/.test(currentValue)) ? (
+        <Control4Date />
+      ) : forceType === "NUMBER" || typeof currentValue === "number" ? (
+        <Control4Number />
+      ) : forceType === "BOOLEAN" || typeof currentValue === "boolean" ? (
+        <Control4Bool />
+      ) : (
+        <Control4String />
+      )}
     </EditableCellContext.Provider>
   );
 }

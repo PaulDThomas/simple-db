@@ -11,16 +11,8 @@ export const ChildrenTable = ({ items: itemList }: ChildrenTableProps) => {
     <>No children</>
   ) : (
     <>
-      <h5>Children</h5>
-      <div
-        style={{
-          display: "flex",
-          flexFlow: "row wrap",
-          gap: "2rem",
-          width: "100%",
-          justifyContent: "space-evenly",
-        }}
-      >
+      <h5 className="text-sm">Children</h5>
+      <div className="w-full grid grid-rows-3 gap-4 grid-flow-col">
         {itemList
           .filter((item) => (item.level_change ?? 0) > 0)
           .sort((a, b) => {

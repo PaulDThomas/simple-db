@@ -12,7 +12,7 @@ export const ParentBreadcrumbs = ({ items }: ParentBreadcrumbsProps) => {
     <Link href={"/"}>Back to search</Link>
   ) : (
     <div>
-      <h5>Parent bookmarks:</h5>
+      <h5 className="text-sm left-2">Parents</h5>
       <div>
         {items
           .filter((item) => (item.level_change ?? 0) < 0)

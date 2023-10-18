@@ -5,10 +5,9 @@ import { AppContext } from "./_context/AppContextProvider";
 import { RowDataRow } from "./api/rowdata/RowDataRow";
 import _ from "lodash";
 import { ShowBreadcrumb } from "./_components/ShowBreadcrumb";
+import { Label, Spinner, TextInput } from "flowbite-react";
 
 export const Search = () => {
-  const appContext = useContext(AppContext);
-
   const [currentSearchValue, setCurrentSearchValue] = useState<string>("");
   const [lastSearchedTerm, setLastSearchedTerm] = useState<string>("");
   const [searchResults, setSearchResults] = useState<RowDataRow[]>([]);
@@ -30,6 +29,7 @@ export const Search = () => {
   const getSearchItems = useCallback(async (searchText: string) => {
     if (searchText !== "") {
       const url = `/api/rowdata?search=${searchText}`;
+      setSearching(true);
       const response = await fetch(url);
       if (response.status === 200) {
         setSearchResults((await response.json()).rows as RowDataRow[]);
@@ -37,6 +37,7 @@ export const Search = () => {
     } else {
       setSearchResults([]);
     }
+    setSearching(false);
   }, []);
   useEffect(() => {
     if (lastSearchedTerm !== "") {
@@ -45,11 +46,15 @@ export const Search = () => {
   }, [getSearchItems, lastSearchedTerm]);
 
   return (
-    <div>
+    <>
       <div>
-        <span style={{ marginRight: "0.25rem" }}>Search:</span>
-        <input
+        <Label htmlFor="search" value="Search" />
+        <TextInput
+          id="search"
+          sizing="md"
+          type="text"
           value={currentSearchValue}
+          autoFocus
           onChange={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -57,18 +62,25 @@ export const Search = () => {
           }}
         />
       </div>
-      {lastSearchedTerm !== "" && (
-        <>
-          <h5 style={{ marginTop: "1rem" }}>
-            Search results for {lastSearchedTerm}
-          </h5>
-          {searchResults.map((item) => (
-            <div key={item.id}>
-              <ShowBreadcrumb id={item.id} item={item} />
-            </div>
-          ))}
-        </>
-      )}
-    </div>
+      <div>
+        {lastSearchedTerm !== "" && (
+          <>
+            {searching && (
+              <div>
+                <Spinner aria-label="Loading..." />
+              </div>
+            )}
+            <h1 style={{ marginTop: "1rem" }} className="text-2xl">
+              Search results for {lastSearchedTerm}
+            </h1>
+            {searchResults.map((item) => (
+              <div key={item.id}>
+                <ShowBreadcrumb id={item.id} item={item} />
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    </>
   );
 };

@@ -7,6 +7,7 @@ import { ChildrenTable } from "../_components/ChildrenTable";
 import { ParentBreadcrumbs } from "../_components/ParentBreadcrumbs";
 import { ThisItem } from "./ThisItem";
 import { LoadFields } from "../LoadFields";
+import Link from "next/link";
 
 export default function DataNav() {
   const [itemList, setItemList] = useState<RowDataRow[]>([]);
@@ -26,10 +27,19 @@ export default function DataNav() {
   }, []);
 
   useEffect(() => {
-    fetchIds(currentId);
+    currentId && fetchIds(currentId);
   }, [currentId, fetchIds]);
 
-  return (
+  return !currentId ? (
+    <div className="w-full">
+      <div className="flex justify-start">
+        <Link href="/" className="text-sm text-amber-900">
+          Back to search
+        </Link>
+      </div>
+      <div className="flex justify-center">No data requested</div>
+    </div>
+  ) : (
     <LoadFields>
       <div>
         <ParentBreadcrumbs

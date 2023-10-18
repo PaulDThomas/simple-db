@@ -30,14 +30,11 @@ export const ShowBreadcrumb = ({
     <span>Id ${id} not found</span>
   ) : (
     <span>
-      <Link
-        href={`/datanav?id=${id}`}
-        style={{ margin: "1rem", borderBottom: "1px solid black" }}
-      >
+      <Link href={`/datanav?id=${id}`} className="hover:underline m-1">
         {bcFields.map((field, i) => (
           <Fragment key={i}>
             {i > 0 && "/"}
-            <span style={{ paddingLeft: "2px", paddingRight: "2px" }}>
+            <span className="px-2">
               {
                 thisItem.simple_table_row[
                   field.simple_table_row.fieldName as string

@@ -7,8 +7,7 @@ import FieldTable from "./FieldTable";
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <h1>Simple DB host</h1>
+    <>
       <SheetUploader />
       <div style={{ position: "relative" }}>
         <Suspense fallback={<p>Loading...</p>}>
@@ -17,6 +16,6 @@ export default function Home() {
           <RowDataTable />
         </Suspense>
       </div>
-    </main>
+    </>
   );
 }

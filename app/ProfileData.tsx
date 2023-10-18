@@ -1,6 +1,6 @@
 import { useAccount, useMsal } from "@azure/msal-react";
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import { loginRequest } from "./authConfig";
 
@@ -11,37 +11,38 @@ export const ProfileData = () => {
   const [picUrl, setPicUrl] = useState<string | null>(null);
 
   const getToken = useCallback(async () => {
-    if (!account) {
-      throw Error("No action acount");
+    if (account) {
+      const response = await instance.acquireTokenSilent({
+        ...loginRequest,
+        account,
+      });
+      const bearer = `Bearer ${response.accessToken}`;
+      return bearer;
     }
-    const response = await instance.acquireTokenSilent({
-      ...loginRequest,
-      account,
-    });
-    const bearer = `Bearer ${response.accessToken}`;
-    return bearer;
   }, [account, instance]);
 
   const getPicture = useCallback(async () => {
     const token = await getToken();
-    try {
-      const response = await fetch(
-        "https://graph.microsoft.com/v1.0/me/photo/$value",
-        {
-          headers: { Authentication: token },
+    if (token) {
+      try {
+        const response = await fetch(
+          "https://graph.microsoft.com/v1.0/me/photo/$value",
+          {
+            headers: { Authentication: token },
+          }
+        );
+        if (response.ok) {
+          const myBlob = await response.blob();
+          setPicUrl(URL.createObjectURL(myBlob));
         }
-      );
-      if (response.ok) {
-        const myBlob = await response.blob();
-        setPicUrl(URL.createObjectURL(myBlob));
+      } catch {
+        console.warn("Retrieve profile picture failed");
       }
-    } catch {
-      console.warn("Retrieve profile picture failed");
     }
   }, [getToken]);
 
-  useEffect(() => {
-    getPicture();
+  useLayoutEffect(() => {
+    process.env.NEXT_PUBLIC_ENV !== "local" && getPicture();
   }, [getPicture]);
 
   return (
