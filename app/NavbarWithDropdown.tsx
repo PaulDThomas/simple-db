@@ -23,8 +23,7 @@ export default function NavbarWithDropdown() {
       <Navbar.Collapse>
         {[
           { href: "/", label: "Search" },
-          { href: "/datanav", label: "View data" },
-          { href: "/import", label: "Import spreadsheet" },
+          { href: "/import", label: "Settings" },
           { href: "/admin", label: "Admin" },
         ].map((r, i) => (
           <Navbar.Link

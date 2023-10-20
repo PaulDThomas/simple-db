@@ -25,28 +25,19 @@ export const ShowBreadcrumb = ({
           field.simple_table_row.inBreadcrumb
       )
       .sort((a, b) => a.grouporder - b.grouporder) ?? [];
+  const bcLabel = bcFields
+    .map(
+      (field) =>
+        thisItem?.simple_table_row[field.simple_table_row.fieldName] as string
+    )
+    .join(" / ");
 
   return !thisItem ? (
     <span>Id ${id} not found</span>
   ) : (
     <span>
       <Link href={`/datanav?id=${id}`} className="hover:underline m-1">
-        {bcFields.length === 0 ? (
-          <span>{id}</span>
-        ) : (
-          bcFields.map((field, i) => (
-            <Fragment key={i}>
-              {i > 0 && "/"}
-              <span className="px-2">
-                {
-                  thisItem.simple_table_row[
-                    field.simple_table_row.fieldName as string
-                  ] as string
-                }
-              </span>
-            </Fragment>
-          ))
-        )}
+        {bcFields.length === 0 ? <span>{id}</span> : <span>{bcLabel}</span>}
       </Link>
     </span>
   );

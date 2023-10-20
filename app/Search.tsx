@@ -70,7 +70,7 @@ export const Search = () => {
                 <Spinner aria-label="Loading..." />
               </div>
             )}
-            <h1 style={{ marginTop: "1rem" }} className="text-xl">
+            <h1 className="text-xl mt-2">
               Search results for {lastSearchedTerm}
             </h1>
             {searchResults.map((item) => (

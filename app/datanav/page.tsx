@@ -1,15 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { RowDataRow } from "../api/rowdata/RowDataRow";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { LoadFields } from "../LoadFields";
 import { ChildrenTable } from "../_components/ChildrenTable";
 import { ParentBreadcrumbs } from "../_components/ParentBreadcrumbs";
+import { iRecentLink } from "../_components/RecentLinks";
+import { AppContext } from "../_context/AppContextProvider";
+import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { ThisItem } from "./ThisItem";
-import { LoadFields } from "../LoadFields";
-import Link from "next/link";
 
 export default function DataNav() {
+  const { state } = useContext(AppContext);
   const [itemList, setItemList] = useState<RowDataRow[]>([]);
 
   const searchParams = useSearchParams();
@@ -26,9 +29,56 @@ export default function DataNav() {
     }
   }, []);
 
+  const thisItem = itemList.find((item) => (item.level_change ?? 0) === 0);
+  const bcFields =
+    state.fields
+      ?.filter(
+        (field) =>
+          field.groupname === thisItem?.groupname &&
+          field.simple_table_row.inBreadcrumb
+      )
+      .sort((a, b) => a.grouporder - b.grouporder) ?? [];
+
   useEffect(() => {
     currentId && fetchIds(currentId);
   }, [currentId, fetchIds]);
+
+  useEffect(() => {
+    if (thisItem) {
+      // Breadcrumb label
+      const bcFields =
+        state.fields
+          ?.filter(
+            (field) =>
+              field.groupname === thisItem?.groupname &&
+              field.simple_table_row.inBreadcrumb
+          )
+          .sort((a, b) => a.grouporder - b.grouporder) ?? [];
+      const bcLabel = bcFields
+        .map(
+          (field) =>
+            thisItem?.simple_table_row[
+              field.simple_table_row.fieldName
+            ] as string
+        )
+        .join(" / ");
+
+      // Save back to storage
+      const oldLinks = JSON.parse(
+        window.localStorage.getItem("recentLinks") ?? "[]"
+      ) as iRecentLink[];
+      window.localStorage.setItem(
+        "recentLinks",
+        JSON.stringify([
+          {
+            id: thisItem.id,
+            label: bcLabel,
+          },
+          ...oldLinks.filter((l) => l.id !== thisItem.id).slice(0, 9),
+        ])
+      );
+    }
+  }, [state.fields, thisItem]);
 
   return !currentId ? (
     <div className="w-full">
@@ -45,9 +95,7 @@ export default function DataNav() {
         <ParentBreadcrumbs
           items={itemList.filter((item) => (item.level_change ?? 0) < 0)}
         />
-        <ThisItem
-          item={itemList.find((item) => (item.level_change ?? 0) === 0)}
-        />
+        <ThisItem item={thisItem} />
         <ChildrenTable
           items={itemList.filter((item) => (item.level_change ?? 0) > 0)}
         />
