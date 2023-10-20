@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { EditableCellContext } from "./EditableCell";
-import { handleChange } from "./handleChange";
 import { Checkbox } from "flowbite-react";
 
 export const Control4Bool = () => {
@@ -11,16 +10,11 @@ export const Control4Bool = () => {
       <Checkbox
         disabled={ctx.operation === "NONE"}
         checked={ctx.currentValue === true}
-        onChange={(e) =>
-          handleChange(
-            e,
-            e.currentTarget.checked,
-            ctx.toDoUpdate,
-            ctx.timerVal,
-            ctx.setCurrentValue,
-            2
-          )
-        }
+        onChange={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          ctx.immediateChange(e.currentTarget.checked);
+        }}
       />
     </div>
   ) : (

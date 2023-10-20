@@ -29,7 +29,7 @@ export const ThisItem = ({ item }: ThisItemProps) => {
               key={i}
               className="border border-amber-400 w-30 mb-2 rounded grid grid-cols-3 gap-3"
             >
-              <div className="text-end my-1 ml-2">
+              <div className="flex justify-end my-1 ml-2 items-center">
                 {field.simple_table_row.fieldLabel}
               </div>
               <div className="col-span-2 pr-2 my-1 w-full">

@@ -31,18 +31,22 @@ export const ShowBreadcrumb = ({
   ) : (
     <span>
       <Link href={`/datanav?id=${id}`} className="hover:underline m-1">
-        {bcFields.map((field, i) => (
-          <Fragment key={i}>
-            {i > 0 && "/"}
-            <span className="px-2">
-              {
-                thisItem.simple_table_row[
-                  field.simple_table_row.fieldName as string
-                ] as string
-              }
-            </span>
-          </Fragment>
-        ))}
+        {bcFields.length === 0 ? (
+          <span>{id}</span>
+        ) : (
+          bcFields.map((field, i) => (
+            <Fragment key={i}>
+              {i > 0 && "/"}
+              <span className="px-2">
+                {
+                  thisItem.simple_table_row[
+                    field.simple_table_row.fieldName as string
+                  ] as string
+                }
+              </span>
+            </Fragment>
+          ))
+        )}
       </Link>
     </span>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import { iSimpleTableCellRenderProps } from "@asup/simple-table";
-import { isEqual } from "lodash";
 import {
   createContext,
   useCallback,
@@ -18,12 +17,9 @@ import { Control4Number } from "./Control4Number";
 import { Control4String } from "./Control4String";
 
 interface EditableCellContextProps {
-  toDoUpdate: React.MutableRefObject<boolean>;
-  timer: React.MutableRefObject<NodeJS.Timeout | null>;
-  timerVal: React.MutableRefObject<number>;
   currentValue: unknown;
-  setCurrentValue: (ret: unknown) => void;
-  doUpdate: () => Promise<void>;
+  debounceChange: (ret: unknown) => void;
+  immediateChange: (ret: unknown) => void;
   operation: "NONE" | "UPDATE_CELL" | "UPDATE_FIELD_CELL" | "PATCH_CELL";
 }
 
@@ -43,14 +39,20 @@ export default function EditableCell({
 }: iCellRenderProps): JSX.Element {
   const { dispatch } = useContext(AppContext);
 
-  // const [currentValue, setCurrentValue] = useState<unknown>();
-  const currentValue = rowData[cellField];
+  const [currentValue, setCurrentValue] = useState<unknown>();
+  const [debouncedValue, setDebouncedValue] = useState<unknown>();
+  const debounceController = useRef<AbortController | null>(null);
+  useEffect(() => {
+    if (debounceController.current) {
+      debounceController.current.abort();
+    }
+    setCurrentValue(rowData[cellField]);
+    setDebouncedValue(rowData[cellField]);
+  }, [cellField, rowData]);
 
-  // Debounce update
-  const toDoUpdate = useRef<boolean>(false);
-  const timer = useRef<NodeJS.Timeout | null>(null);
-  const timerVal = useRef<number>(1000);
-  const doUpdate = useCallback(
+  // Update value from debouncedValue
+  const value = rowData[cellField];
+  const setValue = useCallback(
     async (newValue: unknown) => {
       if (operation === "PATCH_CELL") {
         await patchRowValue(rowData.id as string, cellField, newValue);
@@ -64,33 +66,52 @@ export default function EditableCell({
     },
     [cellField, dispatch, operation, rowData.id]
   );
-  // Update from either row or control
-  // useEffect(() => {
-  //   if (!isEqual(rowData[cellField], currentValue)) {
-  // // Update from interaction
-  // if (toDoUpdate.current) {
-  //   timer.current = setTimeout(doUpdate, timerVal.current);
-  //   toDoUpdate.current = false;
-  // }
-  // // Update from rowData
-  // else {
-  // setCurrentValue(rowData[cellField]);
-  // }
-  //   }
-  //   return () => {
-  //     if (timer.current) clearTimeout(timer.current);
-  //   };
-  // }, [cellField, currentValue, doUpdate, rowData]);
+  useEffect(() => {
+    if (
+      operation !== "NONE" &&
+      debouncedValue !== value &&
+      debounceController.current &&
+      !debounceController.current?.signal.aborted
+    ) {
+      setValue(debouncedValue);
+    }
+  }, [debouncedValue, operation, setValue, value]);
+
+  // Update debounce from current
+  useEffect(() => {
+    if (currentValue !== debouncedValue) {
+      if (debounceController.current) debounceController.current.abort();
+      debounceController.current = new AbortController();
+
+      const timer = setTimeout(() => {
+        if (!debounceController.current?.signal.aborted) {
+          setDebouncedValue(currentValue);
+        }
+      }, 500);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [currentValue, debouncedValue]);
 
   return (
     <EditableCellContext.Provider
       value={{
-        toDoUpdate,
-        timer,
-        timerVal,
-        doUpdate: async () => {},
         currentValue,
-        setCurrentValue: doUpdate,
+        debounceChange: (ret) => {
+          if (debounceController.current) {
+            debounceController.current.abort();
+          }
+          setCurrentValue(ret);
+        },
+        immediateChange: (ret) => {
+          if (debounceController.current) {
+            debounceController.current.abort();
+          }
+          setCurrentValue(ret);
+          setDebouncedValue(ret);
+          if (ret !== value) setValue(ret);
+        },
         operation,
       }}
     >

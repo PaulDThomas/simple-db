@@ -1,7 +1,5 @@
 import { useContext } from "react";
 import { EditableCellContext } from "./EditableCell";
-import { handleChange } from "./handleChange";
-import { handleBlur } from "./handleBlur";
 import { Datepicker } from "flowbite-react";
 
 export const Control4Date = () => {
@@ -10,6 +8,7 @@ export const Control4Date = () => {
   return ctx ? (
     <Datepicker
       style={{ width: "calc(100% - 4px)" }}
+      sizing="sm"
       disabled={ctx.operation === "NONE"}
       value={
         typeof ctx.currentValue === "string"
@@ -18,25 +17,11 @@ export const Control4Date = () => {
           ? ctx.currentValue.toISOString().slice(0, 10)
           : ""
       }
-      onChange={(e) =>
-        handleChange(
-          e,
-          e.currentTarget.value,
-          ctx.toDoUpdate,
-          ctx.timerVal,
-          ctx.setCurrentValue
-        )
-      }
-      onBlur={(e) =>
-        handleBlur(
-          e,
-          e.currentTarget.value,
-          ctx.toDoUpdate,
-          ctx.timer,
-          ctx.setCurrentValue,
-          ctx.doUpdate
-        )
-      }
+      onSelectedDateChanged={(ret: Date) => {
+        const offset = ret.getTimezoneOffset();
+        ret = new Date(ret.getTime() - offset * 60 * 1000);
+        ctx.immediateChange(ret.toISOString().slice(0, 10));
+      }}
     />
   ) : (
     <></>
