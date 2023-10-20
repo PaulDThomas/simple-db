@@ -13,7 +13,7 @@ export default function WorkbookViewer() {
   ) : (
     <>
       {wb && (
-        <div>
+        <div className="w-screen p-12">
           Sheets:
           <ListGroup
             style={{

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import styles from "../page.module.css";
+import { Button } from "flowbite-react";
 
 export default function AdminPage(): JSX.Element {
   const [responseText, setResponseText] = useState<string>("");
@@ -25,10 +25,9 @@ export default function AdminPage(): JSX.Element {
   }, []);
 
   return (
-    <main className={styles.main}>
-      <h1>Simple DB admin page</h1>
-      <div>
-        <button
+    <>
+      <div className="flex">
+        <Button
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -36,9 +35,9 @@ export default function AdminPage(): JSX.Element {
           }}
         >
           Initialise DB
-        </button>
+        </Button>
         &nbsp;
-        <button
+        <Button
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -46,11 +45,11 @@ export default function AdminPage(): JSX.Element {
           }}
         >
           Get fields
-        </button>
+        </Button>
       </div>
       <div>
         <pre style={{ maxWidth: "80vw" }}>{responseText}</pre>
       </div>
-    </main>
+    </>
   );
 }

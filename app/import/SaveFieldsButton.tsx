@@ -1,11 +1,13 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../_context/AppContextProvider";
 import { saveFields } from "../_functions/saveFields";
 import { FieldRow } from "../api/fields/FieldRow";
-import { Button } from "flowbite-react";
+import { Button, Spinner } from "flowbite-react";
+import { BiCloudUpload } from "react-icons/bi";
 
 export const SaveFieldsButton = () => {
   const { state } = useContext(AppContext);
+  const [saving, setSaving] = useState(false);
   return (
     state.fields && (
       <Button
@@ -13,9 +15,12 @@ export const SaveFieldsButton = () => {
         onClick={async (e) => {
           e.stopPropagation();
           e.preventDefault();
-          saveFields(state.fields as FieldRow[]);
+          setSaving(true);
+          await saveFields(state.fields as FieldRow[]);
+          setSaving(false);
         }}
       >
+        {saving ? <Spinner /> : <BiCloudUpload size={24} />}
         Save
       </Button>
     )

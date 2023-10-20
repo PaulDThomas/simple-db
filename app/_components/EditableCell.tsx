@@ -43,40 +43,44 @@ export default function EditableCell({
 }: iCellRenderProps): JSX.Element {
   const { dispatch } = useContext(AppContext);
 
-  const [currentValue, setCurrentValue] = useState<unknown>();
+  // const [currentValue, setCurrentValue] = useState<unknown>();
+  const currentValue = rowData[cellField];
 
   // Debounce update
   const toDoUpdate = useRef<boolean>(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
   const timerVal = useRef<number>(1000);
-  const doUpdate = useCallback(async () => {
-    if (operation === "PATCH_CELL") {
-      await patchRowValue(rowData.id as string, cellField, currentValue);
-    } else if (operation !== "NONE")
-      dispatch({
-        operation,
-        rowId: rowData.id as string,
-        fieldName: cellField,
-        newValue: currentValue,
-      });
-  }, [cellField, currentValue, dispatch, operation, rowData.id]);
+  const doUpdate = useCallback(
+    async (newValue: unknown) => {
+      if (operation === "PATCH_CELL") {
+        await patchRowValue(rowData.id as string, cellField, newValue);
+      } else if (operation !== "NONE")
+        dispatch({
+          operation,
+          rowId: rowData.id as string,
+          fieldName: cellField,
+          newValue,
+        });
+    },
+    [cellField, dispatch, operation, rowData.id]
+  );
   // Update from either row or control
-  useEffect(() => {
-    if (!isEqual(rowData[cellField], currentValue)) {
-      // Update from interaction
-      if (toDoUpdate.current) {
-        timer.current = setTimeout(doUpdate, timerVal.current);
-        toDoUpdate.current = false;
-      }
-      // Update from rowData
-      else {
-        setCurrentValue(rowData[cellField]);
-      }
-    }
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [cellField, currentValue, doUpdate, rowData]);
+  // useEffect(() => {
+  //   if (!isEqual(rowData[cellField], currentValue)) {
+  // // Update from interaction
+  // if (toDoUpdate.current) {
+  //   timer.current = setTimeout(doUpdate, timerVal.current);
+  //   toDoUpdate.current = false;
+  // }
+  // // Update from rowData
+  // else {
+  // setCurrentValue(rowData[cellField]);
+  // }
+  //   }
+  //   return () => {
+  //     if (timer.current) clearTimeout(timer.current);
+  //   };
+  // }, [cellField, currentValue, doUpdate, rowData]);
 
   return (
     <EditableCellContext.Provider
@@ -84,9 +88,9 @@ export default function EditableCell({
         toDoUpdate,
         timer,
         timerVal,
-        doUpdate,
+        doUpdate: async () => {},
         currentValue,
-        setCurrentValue,
+        setCurrentValue: doUpdate,
         operation,
       }}
     >

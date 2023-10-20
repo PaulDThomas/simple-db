@@ -2,7 +2,7 @@
 
 import { SimpleTable, simpleTableSortFn } from "@asup/simple-table";
 import { Button } from "flowbite-react";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import EditableCell from "../_components/EditableCell";
 import { AppContext } from "../_context/AppContextProvider";
 import { SET_FIELDS, UPDATE_FIELD_CELL } from "../_context/appContextReducer";
@@ -39,11 +39,13 @@ export default function FieldTable() {
         <SaveFieldsButton />
         <ImportDataButton />
       </Button.Group>
-      <div style={{ minHeight: "150px" }}>
+      <div>
         <SimpleTable
           headerLabel="Variable list"
           id="field-table"
           keyField={"id"}
+          headerBackgroundColor="rgb(var(--background-start-rgb))"
+          mainBackgroundColor="rgb(var(--background-start-rgb))"
           data={state.fields
             .sort((a, b) => a.grouporder - b.grouporder)
             .map((field) => ({
@@ -121,8 +123,7 @@ export default function FieldTable() {
     </div>
   ) : (
     <>
-      <div className="flex gap-2">
-        No sheet loaded
+      <div>
         <LoadFieldsButton />
       </div>
     </>

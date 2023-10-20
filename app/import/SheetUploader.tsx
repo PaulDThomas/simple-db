@@ -43,22 +43,6 @@ export default function SheetUploader() {
             }}
           />
         )}
-        {/*  Think this is confusing if fields are already imported        
-        {loadedFile !== "" && (
-          <Button
-            className="block"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              dispatch({
-                operation: IMPORT_FIELDS,
-                fieldName: "TPV data agreements",
-              });
-            }}
-          >
-            Import fields
-          </Button>
-        )} */}
       </div>
     </>
   );

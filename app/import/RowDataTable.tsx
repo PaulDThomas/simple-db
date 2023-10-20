@@ -13,24 +13,24 @@ import { LoadRowsButton } from "./LoadRowsButton";
 import { SaveRowsButton } from "./SaveRowsButton";
 import { AppContext } from "../_context/AppContextProvider";
 import { UPDATE_CELL } from "../_context/appContextReducer";
+import { Button } from "flowbite-react";
 
 export default function RowDataTable() {
   const { state } = useContext(AppContext);
-
-  return state.fields && state.rows && state.fields.length > 0 ? (
-    <div
-      style={{
-        width: "90vw",
-        minHeight: "200px",
-        height: "40vh",
-        border: "1px solid black",
-        borderRadius: "4px",
-        marginTop: "2rem",
-        paddingBottom: "2rem",
-      }}
-    >
-      <LoadRowsButton />
-      <SaveRowsButton />
+  const fields = state.fields;
+  const rows = state.rows;
+  return fields && rows && fields.length > 0 ? (
+    <div className="w-full mt-2">
+      <Button.Group className="mb-3">
+        <LoadRowsButton />
+        <SaveRowsButton />
+      </Button.Group>
+      <div>
+        {rows
+          .map((r) => r.simple_table_row.studyName)
+          .filter((s) => s !== undefined)
+          .join(", ")}
+      </div>
       <SimpleTable
         headerLabel={`Data from ${
           state.workbook?.SheetNames[0] ?? "some spreadhseet"
@@ -38,6 +38,7 @@ export default function RowDataTable() {
         id="rowdata-table"
         keyField="id"
         mainBackgroundColor="inherit"
+        headerBackgroundColor="rgb(var(--background-start-rgb))"
         fields={[
           {
             name: "id",
@@ -50,7 +51,7 @@ export default function RowDataTable() {
               );
             },
           },
-          ...state.fields.map((field) => ({
+          ...fields.map((field) => ({
             name: field.simple_table_row.fieldName,
             label: field.simple_table_row.fieldLabel,
             sortFn: simpleTableSortFn,
@@ -59,7 +60,7 @@ export default function RowDataTable() {
               EditableCell({ ...a, operation: UPDATE_CELL }),
           })),
         ]}
-        data={state.rows.map(
+        data={rows.map(
           (row) =>
             ({
               id: row.id,
@@ -70,7 +71,6 @@ export default function RowDataTable() {
     </div>
   ) : (
     <>
-      <div>Waiting for sheet data</div>
       <LoadRowsButton />
     </>
   );
