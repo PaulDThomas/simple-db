@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useContext } from "react";
 import { AppContext } from "../_context/AppContextProvider";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
-import EditableCell from "./EditableCell";
+import EditableCell from "../_components/EditableCell";
 
 interface ShowBreadcrumbProps {
   id: string;

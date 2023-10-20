@@ -67,7 +67,10 @@ export async function post_rows_to_table(
 
     return NextResponse.json(
       {
-        message: `API/${table}/POST: ${newRows.length} rows added`,
+        message:
+          newRows.length === 1
+            ? `API/${table}/POST: ${newRows[0].id} added`
+            : `API/${table}/POST: ${newRows.length} rows added`,
       },
       { status: 200 }
     );

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { LoadFields } from "../LoadFields";
-import { ChildrenTable } from "../_components/ChildrenTable";
-import { ParentBreadcrumbs } from "../_components/ParentBreadcrumbs";
+import { ChildrenTable } from "./ChildrenTable";
+import { ParentBreadcrumbs } from "./ParentBreadcrumbs";
 import { iRecentLink } from "../_components/RecentLinks";
 import { AppContext } from "../_context/AppContextProvider";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
@@ -30,14 +30,6 @@ export default function DataNav() {
   }, []);
 
   const thisItem = itemList.find((item) => (item.level_change ?? 0) === 0);
-  const bcFields =
-    state.fields
-      ?.filter(
-        (field) =>
-          field.groupname === thisItem?.groupname &&
-          field.simple_table_row.inBreadcrumb
-      )
-      .sort((a, b) => a.grouporder - b.grouporder) ?? [];
 
   useEffect(() => {
     currentId && fetchIds(currentId);
@@ -94,12 +86,18 @@ export default function DataNav() {
       <div>
         <ParentBreadcrumbs
           items={itemList.filter((item) => (item.level_change ?? 0) < 0)}
+          thisGroupName={thisItem?.groupname ?? ""}
         />
-        <ThisItem item={thisItem} />
-        <ChildrenTable
-          items={itemList.filter((item) => (item.level_change ?? 0) > 0)}
-        />
-        <hr style={{ marginTop: "2rem" }} />
+        {thisItem ? (
+          <>
+            <ThisItem item={thisItem} />
+            <ChildrenTable
+              items={itemList.filter((item) => (item.level_change ?? 0) > 0)}
+            />
+          </>
+        ) : (
+          <div className="mt-3">No item found</div>
+        )}
       </div>
     </LoadFields>
   );
