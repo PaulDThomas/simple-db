@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { LoadFields } from "../LoadFields";
 import { ChildrenTable } from "./ChildrenTable";
 import { ParentBreadcrumbs } from "./ParentBreadcrumbs";
@@ -13,6 +13,9 @@ import { ThisItem } from "./ThisItem";
 
 export default function DataNav() {
   const { state } = useContext(AppContext);
+  const groupNames = state.fields
+    ?.map((field) => field.groupname)
+    .reduce((gs, g) => (gs.includes(g) ? gs : [...gs, g]), [] as string[]);
   const [itemList, setItemList] = useState<RowDataRow[]>([]);
 
   const searchParams = useSearchParams();
@@ -30,6 +33,14 @@ export default function DataNav() {
   }, []);
 
   const thisItem = itemList.find((item) => (item.level_change ?? 0) === 0);
+  const nextGroupName = useMemo(() => {
+    if (groupNames) {
+      const ix = groupNames.findIndex((g) => g === thisItem?.groupname);
+      if (ix > -1 && ix < groupNames.length - 1) {
+        return groupNames[ix + 1];
+      }
+    }
+  }, [groupNames, thisItem?.groupname]);
 
   useEffect(() => {
     currentId && fetchIds(currentId);
@@ -92,6 +103,8 @@ export default function DataNav() {
           <>
             <ThisItem item={thisItem} />
             <ChildrenTable
+              parentId={thisItem.id}
+              groupName={nextGroupName}
               items={itemList.filter((item) => (item.level_change ?? 0) > 0)}
             />
           </>

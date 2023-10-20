@@ -1,17 +1,34 @@
 import Link from "next/link";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { ShowChildPanel } from "./ShowChildPanel";
+import { AddNewRowDataButton } from "./AddRowDataButton";
 
 interface ChildrenTableProps {
   items: RowDataRow[];
+  parentId: string;
+  groupName?: string;
 }
 
-export const ChildrenTable = ({ items: itemList }: ChildrenTableProps) => {
+export const ChildrenTable = ({
+  items: itemList,
+  parentId,
+  groupName,
+}: ChildrenTableProps) => {
   return itemList.length === 0 ? (
-    <>No children</>
+    <div className="flex items-center">
+      <span className="mr-2">No children</span>
+      {groupName && (
+        <AddNewRowDataButton groupName={groupName} parentId={parentId} />
+      )}
+    </div>
   ) : (
     <>
-      <h5 className="text-sm">Children</h5>
+      <div className="flex">
+        <h5 className="text-sm mr-2">Children</h5>
+        {groupName && (
+          <AddNewRowDataButton groupName={groupName} parentId={parentId} />
+        )}
+      </div>
       <div className="w-full grid grid-rows-3 gap-4 grid-flow-col">
         {itemList
           .filter((item) => (item.level_change ?? 0) > 0)
