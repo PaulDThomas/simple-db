@@ -1,7 +1,5 @@
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
 import { BsFillPlusCircleFill } from "react-icons/bs";
-import { AppContext } from "../_context/AppContextProvider";
 import { saveRows } from "../_functions/saveRows";
 import { RowDataRow } from "../api/rowdata/RowDataRow";
 
