@@ -29,7 +29,7 @@ export const ChildrenTable = ({
           <AddNewRowDataButton groupName={groupName} parentId={parentId} />
         )}
       </div>
-      <div className="w-full grid grid-rows-3 gap-4 grid-flow-col">
+      <div className="w-full grid grid-cols-3 gap-4 grid-flow-row">
         {itemList
           .filter((item) => (item.level_change ?? 0) > 0)
           .sort((a, b) => {

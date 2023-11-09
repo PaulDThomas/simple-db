@@ -35,7 +35,7 @@ export const ShowChildPanel = ({
       </Link>
       {bcFields.map((field, i) => {
         return (
-          <div key={i} className="px-1">
+          <div key={i} className="mb-2 border border-amber-400 rounded p-1">
             <span>{field.simple_table_row.fieldLabel}</span>
             <span>
               <EditableCell

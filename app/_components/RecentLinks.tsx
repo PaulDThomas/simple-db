@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AppContext } from "../_context/AppContextProvider";
 
 export interface iRecentLink {
@@ -10,14 +10,12 @@ export interface iRecentLink {
 }
 
 export const RecentLinks = (): JSX.Element => {
-  const { state } = useContext(AppContext);
-
   // Get current links
-  const [recentLinks, setRecentLinks] = useState<iRecentLink[]>(
+  const recentLinks = useMemo<iRecentLink[]>(() => 
     JSON.parse(
       window.localStorage.getItem("recentLinks") ?? "[]"
     ) as iRecentLink[]
-  );
+  , []);
 
   // Return nothing if there are no links
   if (recentLinks.length === 0) {

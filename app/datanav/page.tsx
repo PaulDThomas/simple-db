@@ -12,15 +12,18 @@ import { RowDataRow } from "../api/rowdata/RowDataRow";
 import { ThisItem } from "./ThisItem";
 
 export default function DataNav() {
+  // State vars
   const { state } = useContext(AppContext);
   const groupNames = state.fields
     ?.map((field) => field.groupname)
     .reduce((gs, g) => (gs.includes(g) ? gs : [...gs, g]), [] as string[]);
+
+  // List of current items
   const [itemList, setItemList] = useState<RowDataRow[]>([]);
 
+  // Current id from URL
   const searchParams = useSearchParams();
   const currentId = searchParams.get("id");
-
   const fetchIds = useCallback(async (id: string | null) => {
     const url = `/api/rowdata${
       id ? `?family_id=${id}&child_level=1&parent_level=9` : ""
@@ -32,6 +35,7 @@ export default function DataNav() {
     }
   }, []);
 
+  // Static helper variables
   const thisItem = itemList.find((item) => (item.level_change ?? 0) === 0);
   const nextGroupName = useMemo(() => {
     if (groupNames) {
@@ -41,31 +45,30 @@ export default function DataNav() {
       }
     }
   }, [groupNames, thisItem?.groupname]);
+  // Breadcrumb fields
+  const bcFields =
+    state.fields
+      ?.filter(
+        (field) =>
+          field.groupname === thisItem?.groupname &&
+          field.simple_table_row.inBreadcrumb
+      )
+      .sort((a, b) => a.grouporder - b.grouporder) ?? [];
+  // Breadcrumb label
+  const bcLabel = bcFields
+    .map(
+      (field) =>
+        thisItem?.simple_table_row[field.simple_table_row.fieldName] as string
+    )
+    .join(" / ");
 
   useEffect(() => {
     currentId && fetchIds(currentId);
   }, [currentId, fetchIds]);
 
+  // Update recent links
   useEffect(() => {
     if (thisItem) {
-      // Breadcrumb label
-      const bcFields =
-        state.fields
-          ?.filter(
-            (field) =>
-              field.groupname === thisItem?.groupname &&
-              field.simple_table_row.inBreadcrumb
-          )
-          .sort((a, b) => a.grouporder - b.grouporder) ?? [];
-      const bcLabel = bcFields
-        .map(
-          (field) =>
-            thisItem?.simple_table_row[
-              field.simple_table_row.fieldName
-            ] as string
-        )
-        .join(" / ");
-
       // Save back to storage
       const oldLinks = JSON.parse(
         window.localStorage.getItem("recentLinks") ?? "[]"
@@ -81,8 +84,9 @@ export default function DataNav() {
         ])
       );
     }
-  }, [state.fields, thisItem]);
+  }, [bcLabel, thisItem]);
 
+  // Return not found / loaded information
   return !currentId ? (
     <div className="w-full">
       <div className="flex justify-start">

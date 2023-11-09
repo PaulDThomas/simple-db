@@ -33,7 +33,7 @@ export default function FieldTable() {
         minHeight: "200px",
       }}
     >
-      <Button.Group>
+      <Button.Group className='mb-4'>
         <LoadFieldsButton />
         <AddFieldButton />
         <SaveFieldsButton />
@@ -98,7 +98,6 @@ export default function FieldTable() {
             {
               name: "inBreadcrumb",
               label: "Breadcrumb",
-              canColumnFilter: true,
               renderFn: (a) =>
                 EditableCell({
                   ...a,
@@ -109,7 +108,6 @@ export default function FieldTable() {
             {
               name: "inChild",
               label: "Child",
-              canColumnFilter: true,
               renderFn: (a) =>
                 EditableCell({
                   ...a,
